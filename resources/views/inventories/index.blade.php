@@ -1,0 +1,51 @@
+@extends('layouts.main')
+
+@section('title', 'Liste des Inventaires')
+
+@section('content')
+<div class="container">
+    <h1>Liste des Inventaires</h1>
+
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <form method="GET" action="{{ route('inventories.index') }}" class="mb-3">
+        <input type="text" name="search" placeholder="Recherche par produit, dépôt ou quantité" class="form-control">
+        <button type="submit" class="btn btn-info mt-2">Rechercher</button>
+    </form>
+    <a href="{{ route('inventories.create') }}" class="btn btn-primary mb-3">Ajouter un Inventaire</a>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Produit</th>
+                <th>Dépôt</th>
+                <th>Quantité</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($inventories as $inventory)
+                <tr>
+                    <td>{{ $inventory->id }}</td>
+                    <td>{{ $inventory->product_id }}</td>
+                    <td>{{ $inventory->depot_id }}</td>
+                    <td>{{ $inventory->quantite }}</td>
+                    <td>
+                        <a href="{{ route('inventories.edit', $inventory->id) }}" class="btn btn-warning">Modifier</a>
+                        <form action="{{ route('inventories.destroy', $inventory->id) }}" method="POST" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+@endsection
