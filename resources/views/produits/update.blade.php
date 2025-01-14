@@ -78,15 +78,25 @@
                   <label for="pack_id">Pack_id</label>
                   <input type="number" step="0.01" class="form-control" id="pack_id" name="pack_id" value="{{ old('pack_id', $product->pack_id) }}" placeholder="Pack_id" {{ $product->pack == 1 ? 'disabled' : '' }}>
               </div>
-              <div class="form-group" id="packIdField" style="{{ $product->pack == 1 ? 'display: block;' : 'display: none;' }}">
-                <label for="pack_products">Produits du pack</label>
-                <select class="form-select" id="pack_products" name="pack_products[]" multiple {{ $product->pack == 0 ? 'disabled' : '' }}>
-                  @foreach ($availableProducts as $availableProduct)
-                    <option value="{{ $availableProduct->id }}" 
-                      {{ in_array($availableProduct->name}}
-                    </option>
-                  @endforeach
+              <div class="form-group" id="produits_associes_container" style="display: {{ old('pack', $product->pack) == '1' ? 'block' : 'none' }};">
+                <label for="produits_associes">Produits disponibles :</label>
+                <select id="produits_associes" name="produits_associes[]" class="form-control selectpicker" multiple data-live-search="true">
+                    @foreach($produitsSansPack as $produit)
+                        <option value="{{ $produit->id }}" {{ in_array($produit->id, $produitsAssociesIds ?? []) ? 'selected' : '' }}>
+                            {{ $produit->name }}
+                        </option>
+                    @endforeach
                 </select>
+              </div>
+              <div class="selected-products" id="pack-products" style="display: {{ old('pack', $product->pack) == '1' ? 'block' : 'none' }};">
+                <h3>Produits dans le Pack :</h3>
+                <ul id="product-list" class="inline-list">
+                    @foreach($produitsAssocies as $produit)
+                        <li data-product-id="{{ $produit->id }}">{{ $produit->name }} 
+                            <button type="button" class="btn btn-sm btn-danger remove-product" data-id="{{ $produit->id }}">X</button>
+                        </li>
+                    @endforeach
+                </ul>
               </div>
               <button type="submit" class="btn btn-gradient-primary me-2">Modifier</button>
               <a href="{{ route('produits.index') }}" class="btn btn-light">Annuler</a>
@@ -137,8 +147,79 @@
     });
   }
 });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#produits_associes').select2({
+      placeholder: 'Sélectionnez des produits',
+      allowClear: true
+    });
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const packField = document.querySelector('#pack');
+    const produitsAssociesContainer = document.querySelector('#produits_associes_container');
+    const packProducts = document.querySelector('#pack-products');
 
+    // Gestion de l'affichage initial
+    if (packField) {
+        togglePackFields(packField.value);
+    }
+
+    // Écouteur d'événements pour le champ "pack"
+    packField.addEventListener('change', function () {
+        togglePackFields(this.value);
+    });
+
+    function togglePackFields(value) {
+        if (value == '1') {
+            produitsAssociesContainer.style.display = 'block';
+            packProducts.style.display = 'block';
+        } else {
+            produitsAssociesContainer.style.display = 'none';
+            packProducts.style.display = 'none';
+        }
+    }
+  });
 
 </script>
+<style>
+    .inline-list {
+        list-style-type: none;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
 
+    .inline-list li {
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 5px 10px;
+        display: inline-block;
+    }
+
+    .btn-small {
+        padding: 5px 10px;
+        font-size: 0.9rem;
+    }
+
+    .remove-item {
+        margin-left: 5px;
+        color: red;
+        cursor: pointer;
+    }
+
+    .main-panel{
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      padding-top: 50px;
+      margin-top: 10px;
+    }
+</style>
 @endsection

@@ -3,15 +3,25 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\SubCategoryController;
+use App\Http\Controllers\SlideController;
+
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Correction de l'orthographe de "apiResource" et ajustement de la syntaxe
-Route::apiResource('products', ProductController::class);
-Route::apiResource('categories', CategoryController::class);
-Route::apiResource('sub-categories', SubCategoryController::class);
-Route::apiResource('depots', DepotController::class);
-Route::apiResource('inventories', InventoryController::class);
+/** Products & categories*/
+Route::get('/products', [ProductController::class, 'index']);
+Route::get('/products/{product}', [ProductController::class, 'show']);
+Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/sub-categories', [SubCategoryController::class, 'index']);
+Route::get('/slides', [SlideController::class, 'index']);
+
+Route::get('/test', function () {
+    return 'API is working';
+});
+
+
 

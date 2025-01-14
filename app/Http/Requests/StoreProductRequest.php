@@ -32,8 +32,8 @@ class StoreProductRequest extends FormRequest
             //'excl_tax_pricePromo' => 'required|numeric',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'available' => 'boolean',
-            'pack' => 'boolean',
-            'pack_id' =>'nullable|numeric',
+            'pack' => 'required|boolean',
+            'produits_associes' => 'nullable|array',
         ];
     }
 }

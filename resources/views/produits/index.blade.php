@@ -85,12 +85,37 @@
         </div>
     </div>
 </div>
-<script>
-    function confirmDelete(button) {
-        if (confirm('Voulez-vous vraiment supprimer ce slide ?')) {
-            // Soumet le formulaire associé au bouton
-            button.closest('form').submit();
-        }
-    }
-</script>
+<style>
+  /* full-page.css */
+  html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+  }
+
+  .page-body-wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      padding-top: 50px;
+      margin-top: 10px;
+  }
+
+  .main-panel {
+      flex-grow: 1;
+      width: 100%;
+  }
+
+  .content-wrapper {
+      padding: 20px; /* Ajustez les marges selon vos besoins */
+      width: 100%;
+  }
+
+  .table-responsive {
+      overflow-x: auto;
+  }
+
+</style>
 @endsection

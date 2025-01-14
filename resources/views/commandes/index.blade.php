@@ -19,7 +19,7 @@
                         <p class="card-description"> Consultez et gérez vos commandes</p>
 
                         <!-- Formulaire de recherche -->
-                        <form method="GET" action="{{ route('orders.index') }}" class="d-flex mb-3">
+                        <form method="GET" action="{{ route('commandes.index') }}" class="d-flex mb-3">
                             <input type="text" name="search" class="form-control" placeholder="Rechercher une commande (nom client, produit...)" value="{{ request('search') }}">
                             <button type="submit" class="btn btn-primary ms-2">Rechercher</button>
                         </form>
@@ -72,4 +72,14 @@
         </div>
     </div>
 </div>
+<style>
+    .page-body-wrapper{
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      padding-top: 50px;
+      margin-top: 10px;
+    }
+</style>
 @endsection

@@ -12,7 +12,11 @@
     <link rel="stylesheet" href="{{asset('assets/vendors/font-awesome/css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{asset('assets/css/style.css') }}">
     <link rel="shortcut icon" href="{{asset('assets/images/favicon.png') }}">
+    <!-- CSS de Select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta3/css/bootstrap-select.min.css">
 </head>
+
 <body>
     <!-- Navbar -->
     @include('partials.navbar')
@@ -49,5 +53,10 @@
     <script src="{{ asset('assets/js/todolist.js') }}"></script>
     <script src="{{ asset('assets/js/jquery.cookie.js') }}"></script>
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>
+    <!-- JavaScript de Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta3/js/bootstrap-select.min.js"></script>
+
 </body>
 </html>

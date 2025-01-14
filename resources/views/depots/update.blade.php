@@ -17,4 +17,14 @@
         </form>
     </div>
 </div>
+<style>
+  .main-panel{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-top: 50px;
+    margin-top: 10px;
+  }
+</style>
 @endsection

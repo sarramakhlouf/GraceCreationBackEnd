@@ -24,6 +24,18 @@ class Product extends Model
         'name', 'description', 'price', 'promotion', 'promo_price', 
         'available', 'image', 'subcategory_id','pack', 'pack_id',
     ];
+
+    // Produit associé à un pack
+    public function pack()
+    {
+        return $this->belongsTo(Produit::class, 'pack_id');
+    }
+
+    // Produits associés à un pack
+    public function produitsAssocies()
+    {
+        return $this->hasMany(Produit::class, 'pack_id');
+    }
     
 
 }
