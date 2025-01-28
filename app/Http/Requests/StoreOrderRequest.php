@@ -20,11 +20,13 @@ class StoreOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'product_id' => 'required|exists:products,id',
-            'client_name' => 'required|string|max:255',
-            'quantity' => 'required|integer|min:1',
-            'total_price' => 'required|numeric|min:0',
-            'order_date' => 'required|date',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'address' => 'required|string|max:255',
+            'phone' => 'required|string|max:15',
+            'products' => 'required|json',
+            'date' => 'required|date',
+            'total' => 'required|numeric',
         ];
     }
 
@@ -34,11 +36,11 @@ class StoreOrderRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'product_id.required' => 'Le produit est requis.',
-            'client_name.required' => 'Le nom du client est requis.',
-            'quantity.required' => 'La quantité est obligatoire.',
-            'total_price.required' => 'Le prix total est requis.',
-            'order_date.required' => 'La date de commande est obligatoire.',
+            'name.required' => 'Le nom du client est requis.',
+            'email.required' => 'Email du client est requis.',
+            'address.required' => 'Adresse est obligatoire.',
+            'phone.required' => 'Le numéro du téléphone est requis.',
+            'products.required' => 'Les produits sont obligatoires.',
         ];
     }
 }

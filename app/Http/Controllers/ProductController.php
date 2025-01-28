@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\SubCategoryController;
 use App\Models\SubCategory;
+use App\Models\Category;
 
 
 class ProductController extends Controller
@@ -53,15 +54,14 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         $data = $request->validated();
-        dd($data);
 
         // Vérifiez et enregistrez l'image si elle existe
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('assets', 'public');
+            $imagePath = $request->file('image')->store('assets/Website-pic', 'public');
             $data['image'] = $imagePath;
         }
 
-        // Créez le produit (pack)
+        // Créez le produit
         $product = Product::create($data);
 
         // Si le produit est un pack, associez les produits sélectionnés
@@ -70,11 +70,11 @@ class ProductController extends Controller
             foreach ($produitsAssociesIds as $id) {
                 $produitAssocie = Product::find($id);
                 if ($produitAssocie) {
-                    $produitAssocie->update([$produit->id => 'pack_id']);
-                    //$produitAssocie->pack_id = $product->id;
+                    $produitAssocie->update(['pack_id' => $product->id]);
                 }
             }
         }
+
         // Redirection vers la liste des produits
         return redirect()->route('produits.index')->with('success', 'Produit ajouté avec succès.');
     }
@@ -91,7 +91,7 @@ class ProductController extends Controller
         // Produits disponibles pour l'association
         $produitsSansPack = Product::whereNull('pack_id')->orWhere('pack_id', $product->id)->get();
 
-        return view('produits.update', compact('product', 'produitsSansPack', 'produitsAssocies', 'produitsAssociesIds'));
+        return view('produits.update', compact('product', 'subcategories', 'produitsSansPack', 'produitsAssocies', 'produitsAssociesIds'));
     }
 
     /**
@@ -100,39 +100,45 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, Product $product)
     {
         $data = $request->validated();
-
-        // Supprimez l'ancienne image si elle existe
+    
+        // Supprimez l'ancienne image si une nouvelle est téléchargée
         if ($request->hasFile('image')) {
             if ($product->image && Storage::exists('public/' . $product->image)) {
                 Storage::delete('public/' . $product->image);
             }
-            $imagePath = $request->file('image')->store('assets', 'public');
+    
+            // Stockez la nouvelle image
+            $imagePath = $request->file('image')->store('assets/Website-pic', 'public');
             $data['image'] = $imagePath;
         }
+    
         // Mettre à jour les informations du produit
         $product->update($data);
-
-        // Si le produit est un pack, gérez les produits associés
+    
+        // Gérer les produits associés si le produit est un pack
         if (!empty($data['pack']) && isset($data['produits_associes'])) {
-            // Convertir la liste des ids des produits associés en tableau
+            // Convertir la liste des IDs des produits associés en tableau
             $produitsAssociesIds = explode(',', $data['produits_associes']);
-
+    
             // Dissocier les anciens produits qui ne sont plus sélectionnés
             Product::where('pack_id', $product->id)
                 ->whereNotIn('id', $produitsAssociesIds)
                 ->update(['pack_id' => null]);
-
+    
             // Associer les nouveaux produits sélectionnés
-            Product::whereIn('id', $produitsAssociesIds)
-                ->update(['pack_id' => $product->id]);
+            foreach ($produitsAssociesIds as $id) {
+                $produitAssocie = Product::find($id);
+                if ($produitAssocie) {
+                    $produitAssocie->update(['pack_id' => $product->id]);
+                }
+            }
         } else {
             // Si le produit n'est plus un pack, désassociez tous les produits
             Product::where('pack_id', $product->id)->update(['pack_id' => null]);
         }
-
-
+    
         return redirect()->route('produits.index')->with('success', 'Produit mis à jour avec succès !');
-    }
+    }    
     /**
      * Remove the specified resource from storage.
      */
@@ -147,4 +153,30 @@ class ProductController extends Controller
 
         return redirect()->route('produits.index')->with('success', 'Produit supprimé avec succès !');
     }
+
+    public function getProducts() {
+        $products = Product::all();
+
+        return $products;
+    }
+
+    // Récupérer les produits par catégorie
+    public function getProductsByCategory($categoryId)
+    {
+        $products = Product::whereHas('subcategory', function ($query) use ($categoryId) {
+            $query->where('category_id', $categoryId);
+        })->get();
+
+        return response()->json($products);
+    }
+
+    // Récupérer les produits par sous-catégorie
+    public function getProductsBySubCategory($subCategoryId)
+    {
+        $products = Product::where('subcategory_id', $subCategoryId)->get();
+
+        return response()->json($products);
+    }
+
+
 }

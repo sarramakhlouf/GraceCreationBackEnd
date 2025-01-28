@@ -50,9 +50,15 @@
               </div>
 
               <div class="form-group">
-                <label for="exampleInputCategory">Sous-catégorie</label>
-                <input type="number" class="form-control" id="exampleInputCategory" name="subcategory_id" value="{{ old('subcategory_id', $product->subcategory_id) }}" placeholder="ID de la sous-catégorie" required>
-              </div>
+                    <label for="Subcategory">Sous-Catégorie associée</label>
+                    <select class="form-control" id="Subcategory" name="subcategory_id" required>
+                        @foreach ($subcategories as $subCategory)
+                            <option value="{{ $subCategory->id }}" {{ $product->subcategory_id == $subCategory->id ? 'selected' : '' }}>
+                                {{ $subCategory->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
               <div class="form-group">
                 <label for="promotion">Promotion</label>

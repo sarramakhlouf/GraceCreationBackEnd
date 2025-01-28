@@ -63,5 +63,23 @@
         <i class="mdi mdi-table-large menu-icon"></i>
       </a>
     </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{{ route('typefilter.index') }}">
+        <span class="menu-title">Types des filtres</span>
+        <i class="mdi mdi-format-list-bulleted menu-icon"></i>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{{ route('filters.index') }}">
+        <span class="menu-title">Filtres</span>
+        <i class="mdi mdi-format-list-bulleted menu-icon"></i>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{{ route('productfilters.index') }}">
+        <span class="menu-title">Rolation produit/filtre</span>
+        <i class="mdi mdi-format-list-bulleted menu-icon"></i>
+      </a>
+    </li>
   </ul>
 </nav>

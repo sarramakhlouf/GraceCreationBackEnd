@@ -13,8 +13,8 @@
 </style>
 <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
   <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
-    <a class="navbar-brand brand-logo" href="{{ route('dashboard') }}"><img src="../assets/images/logo.svg" alt="logo" /></a>
-    <a class="navbar-brand brand-logo-mini" href="{{ route('dashboard') }}"> <img src="{{ asset('assets/images/auth/logo.png') }}" alt="Logo"></a>
+    <a class="navbar-brand brand-logo" href="{{ route('dashboard') }}"><img src="../assets/imgs/auth/Logo-Grace.svg" alt="logo" /></a>
+    <a class="navbar-brand brand-logo-mini" href="{{ route('dashboard') }}"> <img src="{{ asset('assets/imgs/auth/Logo-Grace.svg') }}" alt="Logo"></a>
   </div>
   <div class="navbar-menu-wrapper d-flex align-items-stretch">
     <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
@@ -24,7 +24,7 @@
       <li class="nav-item nav-profile dropdown">
         <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
           <div class="nav-profile-img">
-            <img src="{{ asset('assets/images/auth/logo.png') }}" alt="Logo" class="h-12 w-auto lg:h-16 lg:text-[#FF2D20]">
+            <img src="{{ asset('assets/imgs/auth/logo.png') }}" alt="Logo" class="h-12 w-auto lg:h-16 lg:text-[#FF2D20]">
             <span class="availability-status online"></span>
           </div>
           <div class="nav-profile-text">

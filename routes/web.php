@@ -11,6 +11,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DepotController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\TypeFilterController;
+use App\Http\Controllers\FilterController;
+use App\Http\Controllers\ProductFilterController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthenticatedSessionController::class, 'create'])
@@ -50,9 +53,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/subcategories', [SubcategoryController::class, 'index'])->name('subcategories.index');
     Route::get('/subcategories/create', [SubcategoryController::class, 'create'])->name('subcategories.create');
     Route::post('/subcategories', [SubcategoryController::class, 'store'])->name('subcategories.store');
-    Route::get('/subcategories/{subcategory}', [SubcategoryController::class, 'edit'])->name('subcategories.edit');
-    Route::put('/subcategories/{subcategory}', [SubcategoryController::class, 'update'])->name('subcategories.update');
-    Route::delete('/subcategories/{subcategory}', [SubcategoryController::class, 'destroy'])->name('subcategories.destroy');
+    Route::get('/subcategories/{subCategory}', [SubcategoryController::class, 'edit'])->name('subcategories.edit');
+    Route::put('/subcategories/{subCategory}', [SubcategoryController::class, 'update'])->name('subcategories.update');
+    Route::delete('/subcategories/{subCategory}', [SubcategoryController::class, 'destroy'])->name('subcategories.destroy');
 });
 
 Route::middleware('auth')->group(function () {
@@ -105,6 +108,34 @@ Route::middleware('auth')->group(function () {
     Route::get('/inventories/{inventory}', [InventoryController::class, 'update'])->name('inventories.update');
     Route::delete('/inventories/{inventory}', [InventoryController::class, 'destroy'])->name('inventories.destroy');
 });
+
+Route::middleware('auth')->group(function () {
+    Route::get('/types', [TypeFilterController::class, 'index'])->name('typefilter.index');
+    Route::get('/types/create', [TypeFilterController::class, 'create'])->name('typefilter.create');
+    Route::post('/types', [TypeFilterController::class, 'store'])->name('typefilter.store');
+    Route::get('/types/{typefilter}', [TypeFilterController::class, 'edit'])->name('typefilter.edit');
+    Route::put('/types/{typefilter}', [TypeFilterController::class, 'update'])->name('typefilter.update');
+    Route::delete('/types/{typefilter}', [TypeFilterController::class, 'destroy'])->name('typefilter.destroy');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/filters', [FilterController::class, 'index'])->name('filters.index');
+    Route::get('/filters/create', [FilterController::class, 'create'])->name('filters.create');
+    Route::post('/filters', [FilterController::class, 'store'])->name('filters.store');
+    Route::get('/filters/{filter}', [FilterController::class, 'edit'])->name('filters.edit');
+    Route::put('/filters/{filter}', [FilterController::class, 'update'])->name('filters.update');
+    Route::delete('/filters/{filter}', [FilterController::class, 'destroy'])->name('filters.destroy');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/relationproductfilters', [ProductFilterController::class, 'index'])->name('productfilters.index');
+    Route::get('/relationproductfilters/create', [ProductFilterController::class, 'create'])->name('productfilters.create');
+    Route::post('/relationproductfilters', [ProductFilterController::class, 'store'])->name('productfilters.store');
+    Route::delete('/relationproductfilters/{product_id}/{filter_id}', [ProductFilterController::class, 'destroy'])->name('productfilters.destroy');
+});
+
+
+
 
 
 

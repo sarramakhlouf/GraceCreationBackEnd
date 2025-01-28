@@ -95,4 +95,11 @@ class CategoryController extends Controller
         $category->delete();
         return redirect()->route('categories.index')->with('success', 'Catégorie supprimée avec succès');
     }
+
+    public function getCategories() {
+        $categories = Category::all();
+
+        return $categories;
+    }
+
 }
