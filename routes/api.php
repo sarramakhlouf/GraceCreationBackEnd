@@ -21,9 +21,11 @@ Route::get('/subcategories/{categoryId}', [SubCategoryController::class, 'getSub
 Route::get('/slides', [SlideController::class, 'getSlides']);
 Route::post('/products/filter', [ProductController::class, 'filter']);
 Route::post('/orders', [OrderController::class, 'store']);
-Route::get('/categories/{id}/products', [ProductController::class, 'getProductsByCategory']);
-Route::get('/subcategories/{id}/products', [ProductController::class, 'getProductsBySubCategory']);
+Route::get('/products/categories/{id}', [ProductController::class, 'getProductsByCategory']);
+Route::get('/products/subcategories/{id}', [ProductController::class, 'getProductsBySubCategory']);
 Route::get('/filters/color', [FilterController::class, 'filtersForColor']);
+Route::get('/filtredproducts', [ProductController::class, 'GetFiltredProducts']);
+Route::get('/product/{id}', [ProductController::class, 'showProductById']);
 
 
 Route::get('/test', function () {

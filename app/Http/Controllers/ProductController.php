@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Category;
+use App\Models\SubCategory;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\SubCategoryController;
-use App\Models\SubCategory;
-use App\Models\Category;
+
+
 
 
 class ProductController extends Controller
@@ -174,9 +177,50 @@ class ProductController extends Controller
     public function getProductsBySubCategory($subCategoryId)
     {
         $products = Product::where('subcategory_id', $subCategoryId)->get();
-
         return response()->json($products);
     }
+
+    public function showProductById($id)
+    {
+        $product = Product::find($id);
+        if (!$product) {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
+        return response()->json($product, 200);
+    }
+
+    /*public function GetFiltredProducts(Request $request)
+    {
+        try {
+            $selectedCategories = $request->input('categories', []);
+            $selectedColors = $request->input('filters', []);
+            $query = DB::table('products')
+                ->leftJoin('subcategories', 'products.subcategory_id', '=', 'subcategories.id')
+                ->leftJoin('categories', 'subcategories.category_id', '=', 'categories.id')
+                ->leftJoin('ProductFilter', 'products.id', '=', 'ProductFilter.product_id')
+                ->leftJoin('filters', 'ProductFilter.filter_id', '=', 'filters.id')
+                ->select('products.*','categories.name AS category_name','subcategories.name AS subcategory_name','filters.name AS filter_name');
+            // Filtrer par catégories si elles sont sélectionnées
+            if (!empty($selectedCategories)) {
+                $query->whereIn('categories.id', $selectedCategories);
+            }
+            // Filtrer par couleurs (filtres) si elles sont sélectionnées
+            if (!empty($selectedColors)) {
+                $query->whereIn('filters.id', $selectedColors);
+            }
+
+            $products = $query->get();
+    
+            return response()->json($products);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Server Error',
+                'message' => $e->getMessage(),
+                'trace' => $e->getTrace()
+            ], 500);
+        }
+    }*/
+
 
 
 }
