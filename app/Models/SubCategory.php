@@ -27,5 +27,5 @@ class SubCategory extends Model
     }
 }
 
-?>
+
 

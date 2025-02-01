@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\OrderLine;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use Illuminate\Http\Request;
@@ -20,17 +21,20 @@ class OrderController extends Controller
         // Recherche par client ou produit
         if ($request->has('search')) {
             $search = $request->input('search');
-            $query->where('client_name', 'like', '%' . $search . '%')
-                  ->orWhereHas('product', function ($q) use ($search) {
-                      $q->where('name', 'like', '%' . $search . '%');
-                  });
+            $query->where('name', 'like', '%' . $search . '%')
+                ->orWhereHas('orderLines', function ($q) use ($search) {
+                    $q->whereHas('product', function($q2) use ($search) {
+                        $q2->where('name', 'like', '%' . $search . '%');
+                    });
+                });
         }
 
-        // Récupérer les commandes
-        $orders = $query->with('product')->latest()->paginate(10);
+        // Récupérer toutes les commandes sans pagination
+        $orders = $query->get();
 
         return view('commandes.index', compact('orders'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -47,9 +51,30 @@ class OrderController extends Controller
     public function store(StoreOrderRequest $request)
     {
         $data = $request->validated();
-        Order::create($data);
 
-        return redirect()->route('commandes.index')->with('success', 'Commande ajoutée avec succès !');
+        // Création de la commande
+        $order = Order::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'address' => $data['address'],
+            'phone' => $data['phone'],
+            'total' => $data['total'],
+        ]);
+
+        // Ajouter les produits à la table order_lines
+        foreach ($data['products'] as $product) {
+            OrderLine::create([
+                'order_id' => $order->id,
+                'product_id' => $product['id'],
+                'quantity' => $product['quantity'] ?? 1, // Assure-toi d'envoyer la quantité
+                'price' => $product['price'] ?? 0, // Assure-toi d'envoyer le prix
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Commande ajoutée avec succès !',
+            'order' => $order
+        ], 200);
     }
 
     /**

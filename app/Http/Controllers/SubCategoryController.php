@@ -16,8 +16,8 @@ class SubCategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $query = SubCategory::with('category'); // Charge la relation avec Category
-
+        $query = SubCategory::with('category'); 
+        
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where('name', 'like', '%' . $search . '%');

@@ -14,8 +14,12 @@ class Order extends Model
         'email',
         'address',
         'phone',
-        'products',
-        'date',
+        'order_date',
         'total',
     ];
+    
+    public function orderLines()
+    {
+        return $this->hasMany(OrderLine::class);
+    }
 }

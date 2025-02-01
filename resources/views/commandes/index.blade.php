@@ -29,26 +29,41 @@
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>ID Produit</th>
+                                        <th>ID Commande</th>
                                         <th>Nom du Client</th>
+                                        <th>Produit(s)</th>
                                         <th>Quantité</th>
                                         <th>Prix Total</th>
-                                        <th>Date de Commande</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse ($orders as $order)
                                         <tr>
-                                            <td>{{ $order->product_id }}</td>
-                                            <td>{{ $order->client_name }}</td>
-                                            <td>{{ $order->quantity }}</td>
-                                            <td>{{ $order->total_price }} €</td>
-                                            <td>{{ $order->order_date->format('d/m/Y') }}</td>
+                                            <td>{{ $order->id }}</td>
+                                            <td>{{ $order->name }}</td>
                                             <td>
-                                                <a href="{{ route('orders.show', $order->id) }}" class="btn btn-info btn-sm">Voir</a>
-                                                <a href="{{ route('orders.edit', $order->id) }}" class="btn btn-primary btn-sm">Modifier</a>
-                                                <form action="{{ route('orders.destroy', $order->id) }}" method="POST" style="display: inline-block;">
+                                                @foreach ($order->orderLines as $orderLine)
+                                                    <p>{{ $orderLine->product->name }}</p>
+                                                @endforeach
+                                            </td>
+                                            <td>
+                                                @foreach ($order->orderLines as $orderLine)
+                                                    <p>{{ $orderLine->quantity }}</p>
+                                                @endforeach
+                                            </td>
+                                            <td>
+                                                @php
+                                                    $total = 0;
+                                                    foreach ($order->orderLines as $orderLine) {
+                                                        $total += $orderLine->quantity * $orderLine->price;
+                                                    }
+                                                @endphp
+                                                {{ $total }} TND
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('commandes.edit', $order->id) }}" class="btn btn-primary btn-sm">Modifier</a>
+                                                <form action="{{ route('commandes.destroy', $order) }}" method="POST" style="display: inline-block;">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Voulez-vous vraiment supprimer cette commande ?')">Supprimer</button>
@@ -63,15 +78,13 @@
                                 </tbody>
                             </table>
                         </div>
-
-                        <!-- Pagination (si nécessaire) -->
-                        {{ $orders->links() }}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <style>
     .page-body-wrapper{
       min-height: 100vh;

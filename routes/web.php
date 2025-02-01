@@ -105,7 +105,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/inventories/create', [InventoryController::class, 'create'])->name('inventories.create');
     Route::post('/inventories', [InventoryController::class, 'store'])->name('inventories.store');
     Route::get('/inventories/{inventory}', [InventoryController::class, 'edit'])->name('inventories.edit');
-    Route::get('/inventories/{inventory}', [InventoryController::class, 'update'])->name('inventories.update');
+    Route::put('/inventories/{inventory}', [InventoryController::class, 'update'])->name('inventories.update');
     Route::delete('/inventories/{inventory}', [InventoryController::class, 'destroy'])->name('inventories.destroy');
 });
 

@@ -10,13 +10,25 @@
         @csrf
 
         <div class="form-group">
-            <label for="product_id">ID du Produit</label>
-            <input type="number" class="form-control" id="product_id" name="product_id" required>
+            <label for="productSelect">Produit</label>
+            <select class="form-control" id="productSelect" name="product_id" required>
+                <option value="" disabled selected>Choisissez un produit</option>
+                @foreach ($products as $product)
+                    <option value="{{ $product->id }}" {{ old('product_id') == $product->id ? 'selected' : '' }}>{{ $product->name }}</option>
+                @endforeach
+            </select>
         </div>
 
         <div class="form-group">
-            <label for="depot_id">ID du Dépôt</label>
-            <input type="number" class="form-control" id="depot_id" name="depot_id" required>
+            <label for="depotSelect">Dépôt</label>
+            <select class="form-control" id="depotSelect" name="depot_id" required>
+                <option value="" disabled selected>Choisissez un dépôt</option>
+                @foreach ($depots as $depot)
+                    <option value="{{ $depot->id }}" {{ old('depot_id') == $depot->id ? 'selected' : '' }}>
+                        {{ $depot->name }}
+                    </option>
+                @endforeach
+            </select>
         </div>
 
         <div class="form-group">

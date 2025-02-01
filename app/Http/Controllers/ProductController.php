@@ -147,7 +147,6 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        // Supprimer les associations des produits liés à ce pack
         if ($product->pack) {
             Product::where('pack_id', $product->id)->update(['pack_id' => null]);
         }
@@ -166,12 +165,21 @@ class ProductController extends Controller
     // Récupérer les produits par catégorie
     public function getProductsByCategory($categoryId)
     {
-        $products = Product::whereHas('subcategory', function ($query) use ($categoryId) {
-            $query->where('category_id', $categoryId);
-        })->get();
-
-        return response()->json($products);
+        try {
+            $subcategories = Subcategory::where('category_id', $categoryId)->pluck('id');
+    
+            if ($subcategories->isEmpty()) {
+                return response()->json(['message' => 'No products found for this category'], 404);
+            }
+    
+            $products = Product::whereIn('subcategory_id', $subcategories)->get();
+            return response()->json($products);
+        } catch (\Exception $e) {
+            Log::error($e);
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
     }
+    
 
     // Récupérer les produits par sous-catégorie
     public function getProductsBySubCategory($subCategoryId)
@@ -188,6 +196,33 @@ class ProductController extends Controller
         }
         return response()->json($product, 200);
     }
+
+    public function search(Request $request)
+    {
+        $query = Product::query();
+
+        if ($request->has('name') && !empty($request->name)) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        if ($request->has('category') && !empty($request->category)) {
+            $query->whereHas('subcategory.category', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->category . '%');
+            });
+        }
+
+        if ($request->has('subcategory') && !empty($request->subcategory)) {
+            $query->whereHas('subcategory', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->subcategory . '%');
+            });
+        }
+
+        $products = $query->with(['subcategory.category'])->get();
+
+        return response()->json($products);
+    }
+
+
 
     /*public function GetFiltredProducts(Request $request)
     {

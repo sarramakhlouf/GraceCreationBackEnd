@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Inventory;
+use App\Models\Product;
+use App\Models\Depot;
 use App\Http\Requests\StoreInventoryRequest;
 use App\Http\Requests\UpdateInventoryRequest;
 use Illuminate\Http\Request;
@@ -14,17 +16,19 @@ class InventoryController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Inventory::query();
+        $query = Inventory::with(['product', 'depot']); 
 
-        // Filtrage par ID de produit, ID de dépôt, ou quantité si une recherche est effectuée
         if ($request->has('search')) {
             $search = $request->input('search');
-            $query->where('product_id', 'like', '%' . $search . '%')
-                  ->orWhere('depot_id', 'like', '%' . $search . '%')
-                  ->orWhere('quantite', 'like', '%' . $search . '%');
+            $query->whereHas('product', function ($q) use ($search) {
+                    $q->where('name', 'like', '%' . $search . '%');
+                })
+                ->orWhereHas('depot', function ($q) use ($search) {
+                    $q->where('name', 'like', '%' . $search . '%');
+                })
+                ->orWhere('quantite', 'like', '%' . $search . '%');
         }
 
-        // Récupérer les inventaires avec la recherche appliquée
         $inventories = $query->get();
 
         return view('inventories.index', compact('inventories'));
@@ -35,7 +39,10 @@ class InventoryController extends Controller
      */
     public function create()
     {
-        return view('inventories.create');
+        $products = Product::all();
+        $depots = Depot::all();
+
+        return view('inventories.create', compact('products', 'depots'));
     }
 
     /**
@@ -45,10 +52,9 @@ class InventoryController extends Controller
     {
         $data = $request->validated();
 
-        // Enregistrer l'inventaire
         Inventory::create($data);
 
-        return redirect()->route('inventories.index')->with('success', 'Inventaire ajouté avec succès!');
+        return redirect()->route('inventories.index')->with('success', 'Inventaire ajouté avec succès !');
     }
 
     /**
@@ -64,7 +70,10 @@ class InventoryController extends Controller
      */
     public function edit(Inventory $inventory)
     {
-        return view('inventories.update', compact('inventory'));
+        $products = Product::all();
+        $depots = Depot::all();
+
+        return view('inventories.update', compact('inventory', 'products', 'depots'));
     }
 
     /**
@@ -74,10 +83,9 @@ class InventoryController extends Controller
     {
         $data = $request->validated();
 
-        // Mettre à jour les informations de l'inventaire
         $inventory->update($data);
 
-        return redirect()->route('inventories.index')->with('success', 'Inventaire mis à jour avec succès!');
+        return redirect()->route('inventories.index')->with('success', 'Inventaire mis à jour avec succès !');
     }
 
     /**
@@ -86,6 +94,7 @@ class InventoryController extends Controller
     public function destroy(Inventory $inventory)
     {
         $inventory->delete();
-        return redirect()->route('inventories.index')->with('success', 'Inventaire supprimé avec succès!');
+
+        return redirect()->route('inventories.index')->with('success', 'Inventaire supprimé avec succès !');
     }
 }
