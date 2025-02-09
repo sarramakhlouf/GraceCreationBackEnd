@@ -1,7 +1,7 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
   <ul class="nav">
     <li class="nav-item">
-      <a href="#" class="nav-link"><i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i></a>
+      <a href="{{ route('dashboard') }}" class="nav-link"><i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i></a>
     </li>
     <li class="nav-item">
       <a class="nav-link" href="{{ route('dashboard') }}">
@@ -46,8 +46,8 @@
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="{{ route('admins.index') }}">
-        <span class="menu-title">Admins</span>
+      <a class="nav-link" href="{{ route('clients.index') }}">
+        <span class="menu-title">Clients</span>
         <i class="mdi mdi-lock menu-icon"></i>
       </a>
     </li>

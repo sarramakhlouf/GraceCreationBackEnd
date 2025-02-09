@@ -8,20 +8,18 @@ use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\SlideController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DepotController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\TypeFilterController;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\ProductFilterController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [AuthenticatedSessionController::class, 'create'])
-        ->name('login');
+Route::get('/', [AuthenticatedSessionController::class, 'create'])->name('login');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -74,22 +72,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/commandes/{commande}', [OrderController::class, 'edit'])->name('commandes.edit');
     Route::put('/commandes/{commande}', [OrderController::class, 'update'])->name('commandes.update');
     Route::delete('/commandes/{commande}', [OrderController::class, 'destroy'])->name('commandes.destroy');
+    Route::post('/commandes/{id}/validate', [OrderController::class, 'validateOrder'])->name('commandes.validate');
+    Route::post('/commandes/{id}/cancel', [OrderController::class, 'cancelOrder'])->name('commandes.cancel');
+    Route::get('/commandes/{id}/validate', [OrderController::class, 'validateOrder'])->name('commandes.validate');
 });
-
-Route::middleware('auth')->group(function () {
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
-    Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
-    Route::get('/users/{user}', [UserController::class, 'edit'])->name('users.edit');
-    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
-});
-
-Route::middleware('auth')->group(function () {
-    Route::get('/admins', [AdminController::class, 'index'])->name('admins.index');
-    Route::get('/admins/create', [AdminController::class, 'create'])->name('admins.create');
-    Route::get('/admins/{admin}', [AdminController::class, 'edit'])->name('admins.edit');
-    Route::delete('/admins/{admin}', [AdminController::class, 'destroy'])->name('admins.destroy');
-});
-
 
 Route::middleware('auth')->group(function () {
     Route::get('/depots', [DepotController::class, 'index'])->name('depots.index');
@@ -134,8 +120,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/relationproductfilters/{product_id}/{filter_id}', [ProductFilterController::class, 'destroy'])->name('productfilters.destroy');
 });
 
-
-
+Route::middleware('auth')->group(function () {
+    Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+});
 
 
 

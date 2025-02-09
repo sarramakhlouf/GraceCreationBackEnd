@@ -9,9 +9,15 @@
             <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        @if (session('success'))
+                    @if (session('success'))
                             <div class="alert alert-success">
                                 {{ session('success') }}
+                            </div>
+                        @endif
+                        
+                        @if (session('error'))
+                            <div class="alert alert-danger">
+                                {{ session('error') }}
                             </div>
                         @endif
 
@@ -34,6 +40,7 @@
                                         <th>Produit(s)</th>
                                         <th>Quantité</th>
                                         <th>Prix Total</th>
+                                        <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -43,31 +50,37 @@
                                             <td>{{ $order->id }}</td>
                                             <td>{{ $order->name }}</td>
                                             <td>
-                                                @foreach ($order->orderLines as $orderLine)
-                                                    <p>{{ $orderLine->product->name }}</p>
-                                                @endforeach
+                                            @foreach ($order->orderLines as $orderLine)
+                                                <p>{{ $orderLine->product->name }}</p>
+                                            @endforeach
                                             </td>
                                             <td>
-                                                @foreach ($order->orderLines as $orderLine)
-                                                    <p>{{ $orderLine->quantity }}</p>
-                                                @endforeach
+                                            @foreach ($order->orderLines as $orderLine)
+                                                <p>{{ $orderLine->quantity }}</p>
+                                            @endforeach
                                             </td>
                                             <td>
-                                                @php
-                                                    $total = 0;
-                                                    foreach ($order->orderLines as $orderLine) {
-                                                        $total += $orderLine->quantity * $orderLine->price;
-                                                    }
-                                                @endphp
-                                                {{ $total }} TND
+                                            @php
+                                                $total = 0;
+                                                foreach ($order->orderLines as $orderLine) {
+                                                $total += $orderLine->quantity * $orderLine->price;
+                                                }
+                                            @endphp
+                                            {{ $total }} TND
                                             </td>
+                                            <td>{{ $order->status == 0 ? 'En attente' : ($order->status == 1 ? 'Validée' : 'Annulée') }}</td>
                                             <td>
-                                                <a href="{{ route('commandes.edit', $order->id) }}" class="btn btn-primary btn-sm">Modifier</a>
-                                                <form action="{{ route('commandes.destroy', $order) }}" method="POST" style="display: inline-block;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Voulez-vous vraiment supprimer cette commande ?')">Supprimer</button>
-                                                </form>
+                                                @if($order->status == 0)
+                                                    <form action="{{ route('commandes.validate', $order->id) }}" method="POST" style="display:inline;">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-success">Valider</button>
+                                                    </form>
+
+                                                    <form action="{{ route('commandes.cancel', $order->id) }}" method="POST" style="display:inline;">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-danger">Annuler</button>
+                                                    </form>
+                                                @endif
                                             </td>
                                         </tr>
                                     @empty

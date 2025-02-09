@@ -38,7 +38,7 @@
               </div>
 
               <div class="form-group">
-                <label>Ajouter l'image de produit (si souhaitée)</label>
+                <label>Modifier l'image de produit (si souhaitée)</label>
                 <input type="file" name="image" class="form-control">
                 <!-- Affichage de l'image actuelle s'il y en a une -->
                 @if ($product->image)

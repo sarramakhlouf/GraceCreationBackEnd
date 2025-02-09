@@ -22,25 +22,16 @@
                 <thead>
                   <tr>
                     <th>ID</th>
-                    <th>Prénom</th>
-                    <th>Nom</th>
+                    <th>Nom & prénom</th>
                     <th>Email</th>
-                    <th>Numéro de téléphone</th>
-                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   @forelse ($users as $user)
                     <tr>
                       <td>{{ $user->id }}</td>
-                      <td>{{ $user->first_name }}</td>
-                      <td>{{ $user->last_name }}</td>
+                      <td>{{ $user->name }}</td>
                       <td>{{ $user->email }}</td>
-                      <td>{{ $user->phone}}</td>
-                      <td>
-                        <a href="#" class="btn btn-sm btn-primary">Voir</a>
-                        <a href="#" class="btn btn-sm btn-warning">Modifier</a>
-                      </td>
                     </tr>
                     @empty
                       <tr>

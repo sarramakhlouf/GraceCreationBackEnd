@@ -15,8 +15,8 @@ class CreateOrdersTable extends Migration
             $table->string('address'); // Adresse du client
             $table->string('phone'); // Téléphone du client
             $table->json('products'); // Liste des produits (au format JSON)
-            $table->date('order_date'); // Date de la commande
             $table->decimal('total', 10, 2); // Total de la commande
+            $table->enum('status', [0, 1, 2])->default(0);
             $table->timestamps(); // Champs created_at et updated_at
         });
     }

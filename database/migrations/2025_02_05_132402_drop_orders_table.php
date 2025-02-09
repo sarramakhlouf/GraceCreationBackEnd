@@ -7,7 +7,7 @@ class DropOrdersTable extends Migration
 {
     public function up()
     {
-        Schema::dropIfExists('orders'); // Supprime la table `orders`
+        Schema::dropIfExists('orders');
     }
 
     public function down()
@@ -21,6 +21,7 @@ class DropOrdersTable extends Migration
             $table->json('products');
             $table->date('date');
             $table->decimal('total', 10, 2);
+            $table->enum('status', [0, 1, 2]);
             $table->timestamps();
         });
     }

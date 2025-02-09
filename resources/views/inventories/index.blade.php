@@ -32,7 +32,7 @@
             @foreach($inventories as $inventory)
                 <tr>
                     <td>{{ $inventory->id }}</td>
-                    <td>{{ $inventory->product_id }}</td>
+                    <td>{{ $inventory->product ? $inventory->product->name : 'Product not found' }}</td>
                     <td>{{ $inventory->depot_id }}</td>
                     <td>{{ $inventory->quantite }}</td>
                     <td>

@@ -25,7 +25,6 @@ class StoreOrderRequest extends FormRequest
             'address' => 'required|string|max:255',
             'phone' => 'required|string|max:15',
             'products' => 'required|array', // Validation comme tableau d'objets
-            'products.*.id' => 'required|integer|exists:products,id', 
             //'products.*.quantity' => 'required|integer|min:1', // Validation de la quantité
             'total' => 'required|numeric',
         ];

@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Inventory;
 use App\Models\OrderLine;
+use Illuminate\Http\Request;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
-use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
@@ -51,7 +52,6 @@ class OrderController extends Controller
     public function store(StoreOrderRequest $request)
     {
         $data = $request->validated();
-
         // Création de la commande
         $order = Order::create([
             'name' => $data['name'],
@@ -63,11 +63,25 @@ class OrderController extends Controller
 
         // Ajouter les produits à la table order_lines
         foreach ($data['products'] as $product) {
+            $inventory = Inventory::where('product_id', $product['id'])->first();
+        
+            $productQuantity = $product['quantity'] ?? 1;
+        
+            $productModel = Product::find($product['id']);
+        
+            if (!$inventory || $inventory->quantite < $productQuantity) {
+                // Retourner une alerte si la quantité dépasse celle en stock
+                return response()->json([
+                    'error' => "La quantité maximale du produit: {$productModel->name} est {$inventory->quantite}"
+                ], 400);
+            }
+        
+            // Ajouter la ligne de commande
             OrderLine::create([
                 'order_id' => $order->id,
                 'product_id' => $product['id'],
-                'quantity' => $product['quantity'] ?? 1, // Assure-toi d'envoyer la quantité
-                'price' => $product['price'] ?? 0, // Assure-toi d'envoyer le prix
+                'quantity' => $productQuantity, 
+                'price' => $product['price'] ?? 0,
             ]);
         }
 
@@ -113,4 +127,70 @@ class OrderController extends Controller
         $order->delete();
         return redirect()->route('commandes.index')->with('success', 'Commande supprimée avec succès !');
     }
+
+
+    public function validateOrder($id)
+    {
+        $order = Order::findOrFail($id);
+
+        if ($order->status != 0) {
+            return redirect()->route('commandes.index')->with('error', 'Cette commande a déjà été traitée.');
+        }
+
+        $orderLines = $order->orderLines;
+
+        foreach ($orderLines as $line) {
+            $inventory = Inventory::where('product_id', $line->product_id)->first();
+
+            if (!$inventory || $inventory->quantite < $line->quantity) {
+                return redirect()->route('commandes.index')->with('error', "Stock insuffisant pour le produit : " . $line->product->name);
+            }
+        }
+
+        // Mise à jour du statut de la commande
+        $order->status = 1;
+        $order->save();
+
+        // Si la commande est validée, on décrémente le stock
+        foreach ($orderLines as $line) {
+            $inventory = Inventory::where('product_id', $line->product_id)->first();
+            
+            if ($inventory) {
+                $inventory->quantite -= $line->quantity;
+                $inventory->save();
+            }
+        }
+
+        return redirect()->route('commandes.index')->with('success', 'Commande validée avec succès !');
+    }
+
+
+    // Fonction pour annuler la commande et restaurer le stock
+    public function cancelOrder($id)
+    {
+        $order = Order::findOrFail($id);
+        $orderLines = $order->orderLines;
+
+        if ($order->status != 0) {
+            return redirect()->route('commandes.index')->with('error', 'Commande déjà traitée.');
+        }
+        
+        
+        $order->status = 2;
+        $order->save();
+
+        return redirect()->route('commandes.index')->with('message', 'Commande annulée et stock restauré.');
+        
+    }
+
+    public function getOrderStatus($id)
+    {
+        $order = Order::find($id);
+        
+        return response()->json(['status' => $order->status]);
+    }
+
+
+
+
 }

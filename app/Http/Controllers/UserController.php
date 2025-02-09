@@ -9,14 +9,19 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-    $query = User::query();
-    if ($request->has('search')) {
-        $search = $request->input('search');
-        $query->where('name', 'like', '%' . $search . '%')
-              ->orWhere('email', 'like', '%' . $search . '%');
+        $query = User::query();
+
+        // Vérification du filtre de recherche
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where('name', 'LIKE', "%{$search}%")
+                ->orWhere('email', 'LIKE', "%{$search}%");
+        }
+
+        $users = $query->get();
+
+        return view('auth.users.index', compact('users'));
     }
-    $users = $query; 
-    return view('auth.users.index', compact('users'));
-    }
+
 
 }

@@ -12,14 +12,16 @@ class Inventory extends Model
     /** @use HasFactory<\Database\Factories\InventoryFactory> */
     use HasFactory;
 
-    public function Depots(){
-        return $this->belongsTo(Depot::class);
-    }
-    public function Products(){
-        return $this->belongsTo(Product::class);
-    }
-
     protected $fillable = [
         'quantite', 'product_id', 'depot_id'
     ];
+
+    public function depot(){
+        return $this->belongsTo(Depot::class);
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 }

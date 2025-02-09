@@ -107,5 +107,11 @@ class SlideController extends Controller
 
         return redirect()->route('slides.index')->with('success', 'Slide supprimé avec succès !');
     }
+
+    public function getSlides() {
+        $slides = Slide::all();
+
+        return $slides;
+    }
 }
 

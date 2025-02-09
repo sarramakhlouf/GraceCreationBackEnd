@@ -9,17 +9,11 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'name',
-        'email',
-        'address',
-        'phone',
-        'order_date',
-        'total',
-    ];
+    protected $fillable = ['status', 'name', 'email', 'address', 'phone', 'total', 'client_id'];
     
     public function orderLines()
     {
         return $this->hasMany(OrderLine::class);
     }
+
 }

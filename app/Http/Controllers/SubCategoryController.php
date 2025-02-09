@@ -108,6 +108,12 @@ class SubCategoryController extends Controller
         return redirect()->route('subcategories.index')->with('success', 'Sous-catégorie supprimée avec succès');
     }
 
+    public function getSubCategories() {
+        $subcategories = SubCategory::all();
+
+        return $subcategories;
+    }
+
     public function getSubcategoriesByCategory($categoryId)
     {
         $subcategories = SubCategory::where('category_id', $categoryId)->get();
