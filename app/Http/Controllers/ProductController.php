@@ -157,19 +157,10 @@ class ProductController extends Controller
     }
 
     public function getProducts() {
-        $products = Product::paginate(8);
-        return response()->json([
-            'data' => $products->items(),
-            'current_page' => $products->currentPage(),
-            'last_page' => $products->lastPage(),
-            'total' => $products->total(),
-            'per_page' => $products->perPage(),
-            'next_page_url' => $products->nextPageUrl(),
-            'prev_page_url' => $products->previousPageUrl(),
-        ]);
+        $products = Product::all();
+        return $products;
     }
 
-    // Récupérer les produits par catégorie
     public function getProductsByCategory($categoryId)
     {
         try {

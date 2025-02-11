@@ -50,9 +50,9 @@
                                             <td>{{ $order->id }}</td>
                                             <td>{{ $order->name }}</td>
                                             <td>
-                                            @foreach ($order->orderLines as $orderLine)
-                                                <p>{{ $orderLine->product->name }}</p>
-                                            @endforeach
+                                                @foreach ($order->orderLines as $orderLine)
+                                                    <p>{{ $orderLine->product ? $orderLine->product->name : 'Produit supprimé' }}</p>
+                                                @endforeach
                                             </td>
                                             <td>
                                             @foreach ($order->orderLines as $orderLine)
