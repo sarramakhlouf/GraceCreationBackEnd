@@ -21,7 +21,7 @@ class StoreOrderRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            //'email' => 'required|email|max:255',
             'address' => 'required|string|max:255',
             'phone' => 'required|string|max:15',
             'products' => 'required|array', // Validation comme tableau d'objets
@@ -38,7 +38,7 @@ class StoreOrderRequest extends FormRequest
     {
         return [
             'name.required' => 'Le nom du client est requis.',
-            'email.required' => 'Email du client est requis.',
+            //'email.required' => 'Email du client est requis.',
             'address.required' => 'Adresse est obligatoire.',
             'phone.required' => 'Le numéro du téléphone est requis.',
             'products.required' => 'Les produits sont obligatoires.',

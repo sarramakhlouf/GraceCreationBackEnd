@@ -17,8 +17,9 @@ class Product extends Model
         'available', 'image', 'subcategory_id','pack', 'pack_id',
     ];
     
-    public function SubCategories(){
-        return $this->belongsTo(SubCategory::class);
+    public function subcategory()
+    {
+        return $this->belongsTo(Subcategory::class, 'subcategory_id');
     }
 
     public function inventories()

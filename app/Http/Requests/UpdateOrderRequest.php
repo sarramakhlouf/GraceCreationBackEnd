@@ -22,7 +22,7 @@ class UpdateOrderRequest extends FormRequest
         return [
             'product_id' => 'required|exists:products,id',
             'client_name' => 'required|string|max:255',
-            'quantity' => 'required|integer|min:1',
+            //'quantity' => 'required|integer|min:1',
             'total_price' => 'required|numeric|min:0',
             'order_date' => 'required|date',
         ];
@@ -36,7 +36,7 @@ class UpdateOrderRequest extends FormRequest
         return [
             'product_id.required' => 'Le produit est requis.',
             'client_name.required' => 'Le nom du client est requis.',
-            'quantity.required' => 'La quantité est obligatoire.',
+            //'quantity.required' => 'La quantité est obligatoire.',
             'total_price.required' => 'Le prix total est requis.',
             'order_date.required' => 'La date de commande est obligatoire.',
         ];

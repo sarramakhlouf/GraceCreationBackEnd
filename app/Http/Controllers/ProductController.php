@@ -178,8 +178,6 @@ class ProductController extends Controller
         }
     }
     
-
-    // Récupérer les produits par sous-catégorie
     public function getProductsBySubCategory($subCategoryId)
     {
         $products = Product::where('subcategory_id', $subCategoryId)->get();
@@ -197,28 +195,34 @@ class ProductController extends Controller
 
     public function search(Request $request)
     {
-        $query = Product::query();
+        $searchTerm = $request->query('query');
 
-        if ($request->has('name') && !empty($request->name)) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+        if (empty($searchTerm)) {
+            return response()->json(['message' => 'Veuillez fournir un terme de recherche'], 400);
         }
 
-        if ($request->has('category') && !empty($request->category)) {
-            $query->whereHas('subcategory.category', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->category . '%');
+        $query = Product::query()->where(function ($q) use ($searchTerm) {
+            $q->where('name', 'like', '%' . $searchTerm . '%')
+            ->orWhereHas('subcategory', function ($q) use ($searchTerm) {
+                $q->where('name', 'like', '%' . $searchTerm . '%');
+            })
+            ->orWhereHas('subcategory.category', function ($q) use ($searchTerm) {
+                $q->where('name', 'like', '%' . $searchTerm . '%');
             });
-        }
-
-        if ($request->has('subcategory') && !empty($request->subcategory)) {
-            $query->whereHas('subcategory', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->subcategory . '%');
-            });
-        }
+        });
 
         $products = $query->with(['subcategory.category'])->get();
 
+        if ($products->isEmpty()) {
+            return response()->json(['message' => 'Aucun produit trouvé pour : ' . $searchTerm], 404);
+        }
+
         return response()->json($products);
     }
+   
+
+
+
 
 
 
