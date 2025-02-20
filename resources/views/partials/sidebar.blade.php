@@ -5,7 +5,7 @@
     </li>
     <li class="nav-item">
       <a class="nav-link" href="{{ route('dashboard') }}">
-        <span class="menu-title">Dashboard</span>
+        <span class="menu-title">Tableau de bord</span>
         <i class="mdi mdi-home menu-icon"></i>
       </a>
     </li>
@@ -41,7 +41,7 @@
     </li>
     <li class="nav-item">
       <a class="nav-link" href="{{ route('users.index') }}">
-        <span class="menu-title">Users</span>
+        <span class="menu-title">Administrateurs</span>
         <i class="mdi mdi-lock menu-icon"></i>
       </a>
     </li>

@@ -195,6 +195,11 @@ class OrderController extends Controller
         return response()->json(['status' => $order->status]);
     }
 
+    public function getOrders() {
+        $orders = Order::all();
+        return $orders;
+    }
+
 
 
 

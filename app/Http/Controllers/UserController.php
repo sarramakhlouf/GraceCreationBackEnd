@@ -9,7 +9,7 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::query();
+        $query = User::where('role', 'admin');
 
         // Vérification du filtre de recherche
         if ($request->has('search')) {

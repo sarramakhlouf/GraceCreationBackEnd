@@ -15,6 +15,7 @@ use App\Http\Controllers\TypeFilterController;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\ProductFilterController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ClientAuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthenticatedSessionController::class, 'create'])->name('login');
@@ -121,7 +122,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
+    Route::get('/clients', [ClientAuthController::class, 'index'])->name('clients.index');
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
 });
 

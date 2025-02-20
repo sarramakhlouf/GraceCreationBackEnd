@@ -1,12 +1,12 @@
 @extends('layouts.main')
 
-@section('title', 'Liste des utilisateurs')
+@section('title', 'Liste des administrateurs')
 
 @section('content')
 <div class="main-panel">
   <div class="content-wrapper">
     <div class="page-header">
-      <h3 class="page-title">Liste des utilisateurs</h3>
+      <h3 class="page-title">Liste des administrateurs</h3>
     </div>
     <form method="GET" action="{{ route('users.index') }}">
       <input type="text" name="search" placeholder="Rechercher un utilisateur" class="form-control">
@@ -16,7 +16,7 @@
       <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title">Utilisateurs</h4>
+            <h4 class="card-title">Administrateurs</h4>
             <div class="table-responsive">
               <table class="table table-striped">
                 <thead>
