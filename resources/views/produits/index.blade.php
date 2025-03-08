@@ -23,6 +23,7 @@
             </form>
 
             <a href="{{ route('produits.create') }}" class="btn btn-success mb-3">Ajouter un produit</a>
+
             <div class="table-responsive">
               <table class="table table-hover">
                 <thead>
@@ -31,9 +32,9 @@
                     <th>Nom</th>
                     <th>Description</th>
                     <th>Prix</th>
-                    <th>Promotion</th>
-                    <th>Disponible</th>
-                    <th>Sous-catégorie</th>
+                    <th>Promo</th>
+                    <th>Stock</th>
+                    <th>Catégorie</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -42,76 +43,93 @@
                     <tr>
                       <td>
                         @if ($product->image)
-                          <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" style="width: 50px; height: 50px; object-fit: cover;">
+                          <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
                         @else
                           N/A
                         @endif
                       </td>
                       <td>{{ $product->name }}</td>
-                      <td>{{ $product->description }}</td>
+                      <td title="{{ $product->description }}">{{ Str::limit($product->description, 30) }}</td>
                       <td>{{ $product->price }} DT</td>
-                      <td>
-                        @if ($product->promotion)
-                          Oui (Promo : {{ $product->promo_price }} DT)
-                        @else
-                          Non
-                        @endif
-                      </td>
+                      <td>{{ $product->promotion ? 'Oui ('.$product->promo_price.' DT)' : 'Non' }}</td>
                       <td>{{ $product->available ? 'Oui' : 'Non' }}</td>
                       <td>{{ $product->subcategory_id }}</td>
                       <td>
-                        <a href="{{ route('produits.edit', $product) }}" class="btn btn-primary btn-sm">Modifier</a>
+                        <a href="{{ route('produits.edit', $product) }}" class="btn btn-primary btn-sm">
+                          <i class="fas fa-edit"></i> 
+                        </a>
                         <form action="{{ route('produits.destroy', $product) }}" method="POST" style="display: inline;">
                           @csrf
                           @method('DELETE')
-                          <button type="submit" class="btn btn-danger btn-sm"  onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette ce produit ?')">Supprimer</button>
+                          <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">
+                            <i class="fas fa-trash"></i>
+                          </button>
                         </form>
                       </td>
                     </tr>
-                      @empty
+                  @empty
                     <tr>
-                      <td colspan="7" class="text-center">Aucun produit trouvé</td>
+                      <td colspan="8" class="text-center">Aucun produit trouvé</td>
                     </tr>
                   @endforelse
                 </tbody>
               </table>
             </div>
+
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
 <style>
-  /* full-page.css */
-  /*html, body {
-      margin: 0;
-      padding: 0;
+  .table {
+      font-size: 14px;
+      table-layout: fixed;
       width: 100%;
-      height: 100%;
-  }*/
+  }
+
+  .table th, .table td {
+      padding: 8px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+  }
+
+  .table td:nth-child(3) { /* Réduire la colonne Description */
+      max-width: 150px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+  }
+
+  .table td:nth-child(5), .table td:nth-child(6), .table td:nth-child(7) { 
+      text-align: center;
+  }
+
+  .table img {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 5px;
+  }
+
+  .btn-sm {
+      padding: 3px 6px;
+      font-size: 12px;
+  }
 
   .page-body-wrapper {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       width: 100%;
-      padding-top: 10px;
+      padding-top: 50px;
       margin-top: 10px;
   }
-
-  .main-panel {
-      flex-grow: 1;
-      width: 100%;
-  }
-
-  .content-wrapper {
-      padding: 0px; /* Ajustez les marges selon vos besoins */width: 100%;
-  }
-
-  .table-responsive {
-      overflow-x: auto;
-  }
-
 </style>
+
 @endsection

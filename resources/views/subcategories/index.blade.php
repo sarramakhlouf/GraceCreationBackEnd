@@ -17,14 +17,14 @@
                     <h4 class="card-title">Liste des sous-catégories</h4>
                     <p class="card-description"> Consultez et gérez vos sous-catégories</p>
 
-                    <!-- Formulaire de recherche -->
                     <form method="GET" action="{{ route('subcategories.index') }}" class="d-flex mb-3">
                         <input type="text" name="search" class="form-control" placeholder="Rechercher une sous-catégorie" value="{{ request('search') }}">
-                        <button type="submit" class="btn btn-primary ms-2">Rechercher</button>
+                        <button type="submit" class="btn btn-primary ms-2"> Rechercher </button>
                     </form>
 
-                    <!-- Bouton Ajouter -->
-                    <a href="{{ route('subcategories.create') }}" class="btn btn-success mb-3">Ajouter une sous-catégorie</a>
+                    <a href="{{ route('subcategories.create') }}" class="btn btn-success mb-3">
+                        <i class="fas fa-plus"></i> Ajouter une sous-catégorie
+                    </a>
 
                     <div class="table-responsive">
                       <table class="table table-hover">
@@ -41,19 +41,23 @@
                           <tr>
                             <td>
                               @if ($subCategory->image)
-                                <img src="{{ asset('storage/' . $subCategory->image) }}" alt="{{ $subCategory->name }}" style="width: 50px; height: 50px; object-fit: cover;">
+                                <img src="{{ asset('storage/' . $subCategory->image) }}" alt="{{ $subCategory->name }}" class="table-img">
                               @else
                                 N/A
                               @endif
                             </td>
                             <td>{{ $subCategory->name }}</td>
-                            <td>{{ $subCategory->category->name ?? 'N/A' }}</td> <!-- Affichage de la catégorie associée -->
+                            <td>{{ $subCategory->category->name ?? 'N/A' }}</td> <
                             <td>
-                              <a href="{{ route('subcategories.edit', $subCategory) }}" class="btn btn-primary btn-sm">Modifier</a>
+                              <a href="{{ route('subcategories.edit', $subCategory) }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-edit"></i> 
+                              </a>
                               <form action="{{ route('subcategories.destroy', $subCategory) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette sous-catégorie ?')">Supprimer</button>
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette sous-catégorie ?')">
+                                  <i class="fas fa-trash"></i>
+                                </button>
                               </form>
                             </td>
                           </tr>
@@ -71,8 +75,11 @@
         </div>
     </div>
 </div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
 <style>
-    .page-body-wrapper{
+    .page-body-wrapper {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -80,5 +87,31 @@
       padding-top: 50px;
       margin-top: 10px;
     }
+
+    .table {
+        font-size: 14px;
+        table-layout: fixed;
+        width: 100%;
+    }
+
+    .table th, .table td {
+        padding: 8px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .table-img {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+
+    .btn-sm {
+        padding: 3px 6px;
+        font-size: 12px;
+    }
 </style>
+
 @endsection

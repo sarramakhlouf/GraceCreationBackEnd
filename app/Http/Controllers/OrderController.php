@@ -52,7 +52,6 @@ class OrderController extends Controller
     public function store(StoreOrderRequest $request)
     {
         $data = $request->validated();
-        // Création de la commande
         $order = Order::create([
             'name' => $data['name'],
             'email' => $data['email'],
@@ -61,7 +60,6 @@ class OrderController extends Controller
             'total' => $data['total'],
         ]);
 
-        // Ajouter les produits à la table order_lines
         foreach ($data['products'] as $product) {
             $inventory = Inventory::where('product_id', $product['id'])->first();
         
@@ -81,56 +79,27 @@ class OrderController extends Controller
                 ], 400);
             }
         
-            // Ajouter la ligne de commande
             OrderLine::create([
                 'order_id' => $order->id,
                 'product_id' => $product['id'],
                 'quantity' => $productQuantity, 
                 'price' => $product['price'] ?? 0,
             ]);
+
+            foreach ($orderLines as $line) {
+                $inventory = Inventory::where('product_id', $line->product_id)->first();
+                
+                if ($inventory) {
+                    $inventory->quantite -= $line->quantity;
+                    $inventory->save();
+                }
+            }
         }
 
         return response()->json([
             'message' => 'Commande ajoutée avec succès !',
             'order' => $order
         ], 200);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Order $order)
-    {
-        return view('commandes.show', compact('order'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Order $order)
-    {
-        $products = Product::all(); // Liste des produits pour le formulaire
-        return view('commandes.update', compact('order', 'products'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateOrderRequest $request, Order $order)
-    {
-        $data = $request->validated();
-        $order->update($data);
-
-        return redirect()->route('commandes.index')->with('success', 'Commande mise à jour avec succès !');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Order $order)
-    {
-        $order->delete();
-        return redirect()->route('commandes.index')->with('success', 'Commande supprimée avec succès !');
     }
 
 
@@ -152,25 +121,12 @@ class OrderController extends Controller
             }
         }
 
-        // Mise à jour du statut de la commande
         $order->status = 1;
         $order->save();
-
-        // Si la commande est validée, on décrémente le stock
-        foreach ($orderLines as $line) {
-            $inventory = Inventory::where('product_id', $line->product_id)->first();
-            
-            if ($inventory) {
-                $inventory->quantite -= $line->quantity;
-                $inventory->save();
-            }
-        }
 
         return redirect()->route('commandes.index')->with('success', 'Commande validée avec succès !');
     }
 
-
-    // Fonction pour annuler la commande et restaurer le stock
     public function cancelOrder($id)
     {
         $order = Order::findOrFail($id);

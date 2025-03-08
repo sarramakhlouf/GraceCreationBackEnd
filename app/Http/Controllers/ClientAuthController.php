@@ -15,7 +15,6 @@ class ClientAuthController extends Controller {
         $query = Order::select('name', 'email', 'address', 'phone')
                       ->groupBy('name', 'email', 'address', 'phone'); // On groupe par ces champs pour éviter les doublons
 
-        // Vérification du filtre de recherche
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
@@ -42,7 +41,7 @@ class ClientAuthController extends Controller {
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'client', // Assignation automatique du rôle client
+            'role' => 'client',
         ]);
 
         return response()->json(['message' => 'Compte client créé avec succès'], 201);
@@ -87,13 +86,12 @@ class ClientAuthController extends Controller {
             'new_password' => 'nullable|min:6|confirmed',
         ]);
 
-        $user = User::find($request->id); // Récupération de l'utilisateur sans Auth
+        $user = User::find($request->id); 
 
         if (!$user) {
             return response()->json(['error' => 'Utilisateur introuvable'], 404);
         }
 
-        // Vérification du mot de passe actuel si un changement est demandé
         if ($request->filled('current_password') && !Hash::check($request->current_password, $user->password)) {
             return response()->json(['error' => 'Mot de passe actuel incorrect'], 400);
         }

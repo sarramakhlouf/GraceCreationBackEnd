@@ -14,9 +14,11 @@
 
     <form method="GET" action="{{ route('inventories.index') }}" class="mb-3">
         <input type="text" name="search" placeholder="Recherche par produit, dépôt ou quantité" class="form-control">
-        <button type="submit" class="btn btn-info mt-2">Rechercher</button>
+        <button type="submit" class="btn btn-primary"> Rechercher </button>
     </form>
-    <a href="{{ route('inventories.create') }}" class="btn btn-primary mb-3">Ajouter un Inventaire</a>
+    <a href="{{ route('inventories.create') }}" class="btn btn-primary mb-3">
+        <i class="fas fa-plus"></i> Ajouter un Inventaire
+    </a>
 
     <table class="table table-bordered">
         <thead>
@@ -36,11 +38,11 @@
                     <td>{{ $inventory->depot_id }}</td>
                     <td>{{ $inventory->quantite }}</td>
                     <td>
-                        <a href="{{ route('inventories.edit', $inventory->id) }}" class="btn btn-warning">Modifier</a>
+                        <a href="{{ route('inventories.edit', $inventory->id) }}" class="btn btn-primary"><i class="fas fa-edit"></i> Modifier </a>
                         <form action="{{ route('inventories.destroy', $inventory->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger">Supprimer</button>
+                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i> Supprimer</button>
                         </form>
                     </td>
                 </tr>
@@ -48,14 +50,23 @@
         </tbody>
     </table>
 </div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
 <style>
-    .page-body-wrapper{
+    .page-body-wrapper {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       width: 100%;
       padding-top: 50px;
       margin-top: 10px;
+  }
+
+    .btn-sm {
+      padding: 4px 8px;
+      font-size: 14px;
     }
 </style>
+
 @endsection
