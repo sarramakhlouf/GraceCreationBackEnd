@@ -13,7 +13,7 @@ class ContactController extends Controller
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|email',
-            'phone' => 'required!phone',
+            'phone' => 'required|string|min:8|max:15',
             'message' => 'required|string',
         ]);
 
@@ -23,12 +23,14 @@ class ContactController extends Controller
             'phone' => $request->phone,
             'message' => $request->message,
         ];*/
+        $data = $request->only(['name', 'email', 'phone', 'message']);
 
-        Mail::raw("Nom: {$data['nom']}\nEmail: {$data['email']}\nTéléphone: {$data['phone']}\n\nMessage:\n{$data['message']}", function ($message) use ($data) {
-            $message->to('sarrahmakhlouf2022@gmail.com') // Adresse de réception
+        Mail::raw("Nom: {$data['name']}\nEmail: {$data['email']}\nTéléphone: {$data['phone']}\n\nMessage:\n{$data['message']}", function ($message) use ($data) {
+            $message->to('sarrahmakhlouf2022@gmail.com')
                     ->subject('Nouveau message de contact')
-                    ->from($data['email'], $data['nom']);
+                    ->from($data['email'], $data['name']);
         });
+        
 
         return response()->json(['message' => 'Votre message a été envoyé avec succès !']);
     }

@@ -58,44 +58,47 @@ class ProductController extends Controller
     {
         $data = $request->validated();
 
-        // Vérifiez et enregistrez l'image si elle existe
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('assets/Website-pic', 'public');
             $data['image'] = $imagePath;
         }
 
-        // Créez le produit
+        if (isset($data['pack']) && $data['pack'] == 1) {
+            $data['pack_id'] = null; 
+        }
+
         $product = Product::create($data);
 
-        // Si le produit est un pack, associez les produits sélectionnés
-        if ($data['pack'] && !empty($data['produits_associes'])) {
-            $produitsAssociesIds = explode(',', $data['produits_associes']);
+        if (isset($data['pack']) && $data['pack'] == 1 && !empty($data['produits_associes'])) {
+            $produitsAssociesIds = $data['produits_associes'];
+
             foreach ($produitsAssociesIds as $id) {
-                $produitAssocie = Product::find($id);
-                if ($produitAssocie) {
-                    $produitAssocie->update(['pack_id' => $product->id]);
-                }
+                Product::where('id', $id)->update(['pack_id' => $product->id]);
             }
         }
 
-        // Redirection vers la liste des produits
         return redirect()->route('produits.index')->with('success', 'Produit ajouté avec succès.');
     }
+
+
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(Product $product)
     {
         $subcategories = SubCategory::all();
+
         // Produits associés au pack
         $produitsAssocies = Product::where('pack_id', $product->id)->get();
         $produitsAssociesIds = $produitsAssocies->pluck('id')->toArray();
 
         // Produits disponibles pour l'association
-        $produitsSansPack = Product::whereNull('pack_id')->orWhere('pack_id', $product->id)->get();
+        $produitsSansPack = Product::whereNull('pack_id')->get();
 
         return view('produits.update', compact('product', 'subcategories', 'produitsSansPack', 'produitsAssocies', 'produitsAssociesIds'));
     }
+
+
 
     /**
      * Update the specified resource in storage.

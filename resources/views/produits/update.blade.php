@@ -12,7 +12,7 @@
             <h4 class="card-title">Modifier un produit</h4><br>
             <form class="forms-sample" method="POST" action="{{ route('produits.update', $product->id) }}" enctype="multipart/form-data">
               @csrf
-              @method('PUT') <!-- Indique une requête PUT pour la mise à jour -->
+              @method('PUT') 
 
               <div class="form-group">
                 <label for="exampleInputName1">Nom de produit</label>
@@ -80,10 +80,6 @@
                   <option value="1" {{ $product->pack == 1 ? 'selected' : '' }}>Oui</option>
                 </select>
               </div>
-              <div class="form-group" id="packIdField" style="{{ $product->pack == 0 ? 'display: block;' : 'display: none;' }}">
-                  <label for="pack_id">Pack_id</label>
-                  <input type="number" step="0.01" class="form-control" id="pack_id" name="pack_id" value="{{ old('pack_id', $product->pack_id) }}" placeholder="Pack_id" {{ $product->pack == 1 ? 'disabled' : '' }}>
-              </div>
               <div class="form-group" id="produits_associes_container" style="display: {{ old('pack', $product->pack) == '1' ? 'block' : 'none' }};">
                 <label for="produits_associes">Produits disponibles :</label>
                 <select id="produits_associes" name="produits_associes[]" class="form-control selectpicker" multiple data-live-search="true">
@@ -97,11 +93,11 @@
               <div class="selected-products" id="pack-products" style="display: {{ old('pack', $product->pack) == '1' ? 'block' : 'none' }};">
                 <h3>Produits dans le Pack :</h3>
                 <ul id="product-list" class="inline-list">
-                    @foreach($produitsAssocies as $produit)
-                        <li data-product-id="{{ $produit->id }}">{{ $produit->name }} 
-                            <button type="button" class="btn btn-sm btn-danger remove-product" data-id="{{ $produit->id }}">X</button>
-                        </li>
-                    @endforeach
+                  @foreach($produitsAssocies as $produit)
+                      <li data-product-id="{{ $produit->id }}">{{ $produit->name }} 
+                          <button type="button" class="btn btn-sm btn-danger remove-product" data-id="{{ $produit->id }}">X</button>
+                      </li>
+                  @endforeach
                 </ul>
               </div>
               <button type="submit" class="btn btn-gradient-primary me-2">Modifier</button>

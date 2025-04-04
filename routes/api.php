@@ -29,6 +29,8 @@ Route::get('/orderss', [OrderController::class, 'getOrders']);
 Route::get('/orders/{id}/status', [OrderController::class, 'getOrderStatus']);
 
 Route::get('/filters/color', [FilterController::class, 'filtersForColor']);
+Route::get('/filters', [FilterController::class, 'getFilters']);
+
 
 Route::get('/products', [ProductController::class, 'getProducts']);
 Route::get('/products/categories/{id}', [ProductController::class, 'getProductsByCategory']);

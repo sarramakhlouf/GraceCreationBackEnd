@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Filter;
 use App\Models\TypeFilter;
+use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -128,4 +130,32 @@ class FilterController extends Controller
 
         return response()->json($filters);
     }
+
+    public function getFilters()
+    {
+        $categories = Category::with(['subCategories.products'])->get()->map(function ($category) {
+            $category->products_count = $category->subCategories->sum(function ($subCategory) {
+                return $subCategory->products->count();
+            });
+            return $category;
+        });
+        
+        $colors = Filter::where('type_id', 3)->get(); 
+        $priceRanges = [
+            ['min' => 20, 'max' => 50, 'count' => Product::whereBetween('price', [20, 50])->count()],
+            ['min' => 50, 'max' => 100, 'count' => Product::whereBetween('price', [50, 100])->count()],
+            ['min' => 100, 'max' => 150, 'count' => Product::whereBetween('price', [100, 150])->count()],
+            ['min' => 150, 'max' => 200, 'count' => Product::whereBetween('price', [150, 200])->count()],
+            ['min' => 200, 'max' => 99999, 'count' => Product::where('price', '>', 200)->count()],
+        ];
+
+        return response()->json([
+            'categories' => $categories,
+            'colors' => $colors,
+            'priceRanges' => $priceRanges
+        ]);
+    }
+
+
+
 }

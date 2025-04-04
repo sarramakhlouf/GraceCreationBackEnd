@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\TypeFilter;
 
 class Filter extends Model
 {
@@ -24,6 +25,6 @@ class Filter extends Model
      */
     public function type()
     {
-        return $this->belongsTo(TypeFilter::class);
+        return $this->belongsTo(TypeFilter::class, 'type_id');
     }
 }
