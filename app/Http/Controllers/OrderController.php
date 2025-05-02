@@ -52,6 +52,27 @@ class OrderController extends Controller
     public function store(StoreOrderRequest $request)
     {
         $data = $request->validated();
+
+        // Étape 1 : Vérification du stock pour tous les produits
+        foreach ($data['products'] as $product) {
+            $inventory = Inventory::where('product_id', $product['id'])->first();
+            $productQuantity = $product['quantity'] ?? 1;
+            $productModel = Product::find($product['id']);
+
+            if (!$inventory) {
+                return response()->json([
+                    'error' => "Le produit {$productModel->name} n'a pas de stock enregistré."
+                ], 400);
+            }
+
+            if ($inventory->quantite < $productQuantity) {
+                return response()->json([
+                    'error' => "La quantité maximale du produit: {$productModel->name} est {$inventory->quantite}"
+                ], 400);
+            }
+        }
+
+        // Étape 2 : Tout est OK, on crée la commande
         $order = Order::create([
             'name' => $data['name'],
             'email' => $data['email'],
@@ -61,39 +82,18 @@ class OrderController extends Controller
         ]);
 
         foreach ($data['products'] as $product) {
-            $inventory = Inventory::where('product_id', $product['id'])->first();
-        
             $productQuantity = $product['quantity'] ?? 1;
-        
-            $productModel = Product::find($product['id']);
 
-            if (!$inventory) {
-                return response()->json([
-                    'error' => "Le produit {$productModel->name} n'a pas de stock enregistré."
-                ], 400);
-            }
-        
-            if ($inventory->quantite < $productQuantity) {
-                return response()->json([
-                    'error' => "La quantité maximale du produit: {$productModel->name} est {$inventory->quantite}"
-                ], 400);
-            }
-        
             OrderLine::create([
                 'order_id' => $order->id,
                 'product_id' => $product['id'],
-                'quantity' => $productQuantity, 
+                'quantity' => $productQuantity,
                 'price' => $product['price'] ?? 0,
             ]);
 
-            foreach ($orderLines as $line) {
-                $inventory = Inventory::where('product_id', $line->product_id)->first();
-                
-                if ($inventory) {
-                    $inventory->quantite -= $line->quantity;
-                    $inventory->save();
-                }
-            }
+            $inventory = Inventory::where('product_id', $product['id'])->first();
+            $inventory->quantite -= $productQuantity;
+            $inventory->save();
         }
 
         return response()->json([
@@ -101,6 +101,7 @@ class OrderController extends Controller
             'order' => $order
         ], 200);
     }
+
 
 
     public function validateOrder($id)
@@ -136,6 +137,14 @@ class OrderController extends Controller
             return redirect()->route('commandes.index')->with('error', 'Commande déjà traitée.');
         }
         
+        foreach ($order->orderLines as $line) {
+            $inventory = Inventory::where('product_id', $line->product_id)->first();
+    
+            if ($inventory) {
+                $inventory->quantite += $line->quantity;
+                $inventory->save();
+            }
+        }
         
         $order->status = 2;
         $order->save();
@@ -151,10 +160,16 @@ class OrderController extends Controller
         return response()->json(['status' => $order->status]);
     }
 
-    public function getOrders() {
-        $orders = Order::all();
-        return $orders;
+    public function getOrders($email)
+    {
+        if (!$email) {
+            return response()->json(['error' => 'Email requis'], 400);
+        }
+
+        $orders = Order::where('email', $email)->get();
+        return response()->json($orders);
     }
+
 
 
 

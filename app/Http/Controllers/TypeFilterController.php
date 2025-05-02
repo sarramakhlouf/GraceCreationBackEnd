@@ -67,12 +67,18 @@ class TypeFilterController extends Controller
      */
     public function update(Request $request, TypeFilter $typefilter)
     {
-        $request->validate([
-            'type' => 'required|string|max:255',
-        ]);
-        $typefilter->update($request->all());
+        try {
+            $request->validate([
+                'type' => 'required|string|max:255',
+            ]);
 
-        return redirect()->route('typefilter.index')->with('success', 'TypeFilter mis à jour avec succès.');
+            $typefilter->update($request->all());
+
+            return redirect()->route('typefilter.index')->with('success', 'TypeFilter mis à jour avec succès.');
+
+        } catch (\Exception $e) {
+            return redirect()->route('typefilter.index')->with('error', 'Une erreur est survenue lors de la mise à jour du TypeFilter.');
+        }
     }
 
     /**

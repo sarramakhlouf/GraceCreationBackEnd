@@ -81,11 +81,15 @@ class InventoryController extends Controller
      */
     public function update(UpdateInventoryRequest $request, Inventory $inventory)
     {
-        $data = $request->validated();
+        try {
+            $data = $request->validated();
 
-        $inventory->update($data);
+            $inventory->update($data);
 
-        return redirect()->route('inventories.index')->with('success', 'Inventaire mis à jour avec succès !');
+            return redirect()->route('inventories.index')->with('success', 'Inventaire mis à jour avec succès !');
+        } catch (\Exception $e) {
+            return redirect()->route('inventories.index')->with('error', 'Une erreur est survenue lors de la mise à jour de l\'inventaire.');
+        }
     }
 
     /**

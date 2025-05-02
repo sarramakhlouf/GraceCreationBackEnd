@@ -83,27 +83,31 @@ class FilterController extends Controller
      */
     public function update(Request $request, Filter $filter)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'icon' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
-            'type_id' => 'required|exists:typefilter,id',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'icon' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+                'type_id' => 'required|exists:typefilter,id',
+            ]);
 
-        $data = $request->all();
+            $data = $request->all();
 
-        if ($request->hasFile('icon')) {
-            // Supprimer l'ancienne icône si elle existe
-            if ($filter->icon && Storage::disk('public')->exists($filter->icon)) {
-                Storage::disk('public')->delete($filter->icon);
+            if ($request->hasFile('icon')) {
+                if ($filter->icon && Storage::disk('public')->exists($filter->icon)) {
+                    Storage::disk('public')->delete($filter->icon);
+                }
+
+                $data['icon'] = $request->file('icon')->store('assets/Website-pic', 'public');
             }
 
-            // Enregistrer la nouvelle icône
-            $data['icon'] = $request->file('icon')->store('assets/Website-pic', 'public');
+            $filter->update($data);
+
+            return redirect()->route('filters.index')->with('success', 'Filtre mis à jour avec succès.');
+            
+        } catch (\Exception $e) {
+           
+            return redirect()->route('filters.index')->with('error', 'Une erreur est survenue lors de la mise à jour du filtre.');
         }
-
-        $filter->update($data);
-
-        return redirect()->route('filters.index')->with('success', 'Filtre mis à jour avec succès.');
     }
 
     /**
@@ -123,7 +127,7 @@ class FilterController extends Controller
 
     public function filtersForColor()
     {
-        // Récupère les filtres où le type est "couleur"
+
         $filters = Filter::whereHas('type', function ($query) {
             $query->where('type', 'couleur');
         })->get();

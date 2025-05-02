@@ -24,9 +24,7 @@
                     </form>
 
                     <!-- Bouton Ajouter -->
-                    <a href="{{ route('categories.create') }}" class="btn btn-success mb-3">
-                        <i class="fas fa-plus"></i> Ajouter une catégorie
-                    </a>
+                    <a href="{{ route('categories.create') }}" class="btn btn-success mb-3"><i class="fas fa-plus"></i> Ajouter une catégori</a>
 
                     <div class="table-responsive">
                       <table class="table table-hover">
@@ -49,16 +47,12 @@
                             </td>
                             <td>{{ $category->name }}</td>
                             <td>
-                              <a href="{{ route('categories.edit', $category) }}" class="btn btn-primary btn-sm">
-                                <i class="fas fa-edit"></i> <!-- 📝 Icône Modifier -->
-                              </a>
+                              <a href="{{ route('categories.edit', $category) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i>Modifier</a>
 
                               <form action="{{ route('categories.destroy', $category) }}" method="POST" style="display: inline-block;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Voulez-vous vraiment supprimer cette catégorie ?')">
-                                  <i class="fas fa-trash"></i> <!-- 🗑️ Icône Supprimer -->
-                                </button>
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Voulez-vous vraiment supprimer cette catégorie ?')"><i class="fas fa-trash"></i>Supprimer</button>
                               </form>
                             </td>
                           </tr>
@@ -76,31 +70,5 @@
         </div>
     </div>
 </div>
-
-<!-- Ajout du CDN FontAwesome pour les icônes -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-
-<style>
-  .page-body-wrapper {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      padding-top: 50px;
-      margin-top: 10px;
-  }
-
-  .table-img {
-      width: 50px;
-      height: 50px;
-      object-fit: cover;
-      border-radius: 5px;
-  }
-
-  .btn-sm {
-      padding: 4px 8px;
-      font-size: 14px;
-  }
-</style>
 
 @endsection

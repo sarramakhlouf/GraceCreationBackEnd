@@ -11,7 +11,6 @@ class UserController extends Controller
     {
         $query = User::where('role', 'admin');
 
-        // Vérification du filtre de recherche
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where('name', 'LIKE', "%{$search}%")

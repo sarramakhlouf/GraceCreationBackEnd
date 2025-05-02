@@ -69,12 +69,16 @@ class DepotController extends Controller
      */
     public function update(UpdateDepotRequest $request, Depot $depot)
     {
-        $data = $request->validated();
+        try {
+            $data = $request->validated();
+    
+            $depot->update($data);
 
-        $depot->update($data);
-
-        return redirect()->route('depots.index')->with('success', 'Dépôt mis à jour avec succès !');
-    }
+            return redirect()->route('depots.index')->with('success', 'Dépôt mis à jour avec succès !');
+        } catch (\Exception $e) {
+            return redirect()->route('depots.index')->with('error', 'Une erreur est survenue lors de la mise à jour du dépôt.');
+        }
+    }    
 
     /**
      * Remove the specified resource from storage.

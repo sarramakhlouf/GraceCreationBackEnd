@@ -24,15 +24,14 @@ class ProductController extends Controller
     {
         $query = Product::query();
 
-        // Filtrer les produits selon la recherche
+        
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where('name', 'like', '%' . $search . '%')
                   ->orWhere('description', 'like', '%' . $search . '%');
         }
-
-        // Récupérer les produits filtrés ou tous les produits si pas de recherche
-        $products = $query->get();
+        
+        $products = $query->paginate(10);
 
         return view('produits.index', compact('products'));
     }
@@ -42,10 +41,10 @@ class ProductController extends Controller
      */
     public function create()
     {
-        // Récupérer les sous-catégories
+        
         $subcategories = SubCategory::all();
 
-        // Récupérer les produits qui ne sont pas des packs pour le multiselect
+
         $produitsSansPack = Product::where('pack', false)->get();
 
         return view('produits.create', compact('produitsSansPack', 'subcategories'));
@@ -63,17 +62,16 @@ class ProductController extends Controller
             $data['image'] = $imagePath;
         }
 
-        if (isset($data['pack']) && $data['pack'] == 1) {
-            $data['pack_id'] = null; 
+        if (!empty($data['pack']) && $data['pack'] == 1) {
+            $data['pack_id'] = null;
         }
 
         $product = Product::create($data);
 
-        if (isset($data['pack']) && $data['pack'] == 1 && !empty($data['produits_associes'])) {
-            $produitsAssociesIds = $data['produits_associes'];
-
-            foreach ($produitsAssociesIds as $id) {
-                Product::where('id', $id)->update(['pack_id' => $product->id]);
+        if (!empty($data['pack']) && $data['pack'] == 1 && !empty($data['produits_associes'])) {
+            foreach ($data['produits_associes'] as $produitId) {
+                // On met à jour chaque produit associé pour leur donner le pack_id du produit actuel
+                Product::where('id', $produitId)->update(['pack_id' => $product->id]);
             }
         }
 
@@ -87,17 +85,11 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $subcategories = SubCategory::all();
-
-        // Produits associés au pack
         $produitsAssocies = Product::where('pack_id', $product->id)->get();
         $produitsAssociesIds = $produitsAssocies->pluck('id')->toArray();
-
-        // Produits disponibles pour l'association
         $produitsSansPack = Product::whereNull('pack_id')->get();
-
         return view('produits.update', compact('product', 'subcategories', 'produitsSansPack', 'produitsAssocies', 'produitsAssociesIds'));
     }
-
 
 
     /**
@@ -106,32 +98,23 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, Product $product)
     {
         $data = $request->validated();
-    
-        // Supprimez l'ancienne image si une nouvelle est téléchargée
+
         if ($request->hasFile('image')) {
             if ($product->image && Storage::exists('public/' . $product->image)) {
                 Storage::delete('public/' . $product->image);
             }
-    
-            // Stockez la nouvelle image
-            $imagePath = $request->file('image')->store('assets/Website-pic', 'public');
-            $data['image'] = $imagePath;
+            $data['image'] = $this->handleImageUpload($request);
         }
-    
-        // Mettre à jour les informations du produit
+
         $product->update($data);
-    
-        // Gérer les produits associés si le produit est un pack
+
         if (!empty($data['pack']) && isset($data['produits_associes'])) {
-            // Convertir la liste des IDs des produits associés en tableau
             $produitsAssociesIds = explode(',', $data['produits_associes']);
-    
-            // Dissocier les anciens produits qui ne sont plus sélectionnés
+
             Product::where('pack_id', $product->id)
                 ->whereNotIn('id', $produitsAssociesIds)
                 ->update(['pack_id' => null]);
-    
-            // Associer les nouveaux produits sélectionnés
+
             foreach ($produitsAssociesIds as $id) {
                 $produitAssocie = Product::find($id);
                 if ($produitAssocie) {
@@ -139,12 +122,11 @@ class ProductController extends Controller
                 }
             }
         } else {
-            // Si le produit n'est plus un pack, désassociez tous les produits
             Product::where('pack_id', $product->id)->update(['pack_id' => null]);
         }
-    
-        return redirect()->route('produits.index')->with('success', 'Produit mis à jour avec succès !');
-    }    
+
+        return redirect()->route('produits.index')->with('success', 'Produit mis à jour avec succès.');
+    }   
     /**
      * Remove the specified resource from storage.
      */
@@ -222,44 +204,38 @@ class ProductController extends Controller
 
         return response()->json($products);
     }
-   
 
-
-
-
-
-
-    /*public function GetFiltredProducts(Request $request)
+    public function getAllProductsWithDetails()
     {
         try {
-            $selectedCategories = $request->input('categories', []);
-            $selectedColors = $request->input('filters', []);
-            $query = DB::table('products')
+            $products = DB::table('products')
                 ->leftJoin('subcategories', 'products.subcategory_id', '=', 'subcategories.id')
                 ->leftJoin('categories', 'subcategories.category_id', '=', 'categories.id')
                 ->leftJoin('ProductFilter', 'products.id', '=', 'ProductFilter.product_id')
                 ->leftJoin('filters', 'ProductFilter.filter_id', '=', 'filters.id')
-                ->select('products.*','categories.name AS category_name','subcategories.name AS subcategory_name','filters.name AS filter_name');
-            // Filtrer par catégories si elles sont sélectionnées
-            if (!empty($selectedCategories)) {
-                $query->whereIn('categories.id', $selectedCategories);
-            }
-            // Filtrer par couleurs (filtres) si elles sont sélectionnées
-            if (!empty($selectedColors)) {
-                $query->whereIn('filters.id', $selectedColors);
-            }
+                ->select(
+                    'products.id as product_id',
+                    'products.name as product_name',
+                    'products.price',
+                    'products.image',
+                    'categories.id AS category_id', 
+                    'subcategories.id AS subcategory_id',
+                    'categories.name AS category_name',
+                    'subcategories.name AS subcategory_name',
+                    'filters.id AS filter_id', 
+                    'filters.name AS filter_name'
+                )
+                ->get();
 
-            $products = $query->get();
-    
             return response()->json($products);
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Server Error',
-                'message' => $e->getMessage(),
-                'trace' => $e->getTrace()
+                'error' => 'Erreur serveur',
+                'message' => $e->getMessage()
             ], 500);
         }
-    }*/
+    }
+
 
 
 

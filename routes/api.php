@@ -25,7 +25,7 @@ Route::get('/subcategories', [SubCategoryController::class, 'getSubcategories'])
 Route::get('/slides', [SlideController::class, 'getSlides']);
 
 Route::post('/orders', [OrderController::class, 'store']);
-Route::get('/orderss', [OrderController::class, 'getOrders']);
+Route::get('/orderss/{email}', [OrderController::class, 'getOrders']);
 Route::get('/orders/{id}/status', [OrderController::class, 'getOrderStatus']);
 
 Route::get('/filters/color', [FilterController::class, 'filtersForColor']);
@@ -38,6 +38,7 @@ Route::get('/products/subcategories/{id}', [ProductController::class, 'getProduc
 Route::get('/product/{id}', [ProductController::class, 'showProductById']);
 Route::get('/products/search', [ProductController::class, 'search']);
 Route::post('/products/filter', [ProductController::class, 'filter']);
+Route::get('/products-with-details', [ProductController::class, 'getAllProductsWithDetails']);
 
 Route::post('/contact', [ContactController::class, 'sendEmail']);
 

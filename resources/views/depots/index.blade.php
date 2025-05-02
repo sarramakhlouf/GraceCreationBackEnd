@@ -33,13 +33,13 @@
                             <td>{{ $depot->name }}</td>
                             <td>
                                 <a href="{{ route('depots.edit', $depot->id) }}" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-edit"></i> 
+                                    <i class="fas fa-edit"></i>Modifier 
                                 </a>
                                 <form action="{{ route('depots.destroy', $depot->id) }}" method="POST" style="display:inline-block;">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Confirmer la suppression ?')">
-                                        <i class="fas fa-trash"></i> 
+                                        <i class="fas fa-trash"></i>Supprimer
                                     </button>
                                 </form>
                             </td>
@@ -54,22 +54,4 @@
         </div>
     </div>
 </div>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-
-<style>
-    .page-body-wrapper {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      padding-top: 50px;
-      margin-top: 10px;
-    }
-
-    .btn-sm {
-      padding: 4px 8px;
-      font-size: 14px;
-    }
-</style>
 @endsection

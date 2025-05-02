@@ -25,7 +25,7 @@
                     </form>
 
                     <!-- Bouton Ajouter -->
-                    <a href="{{ route('typefilter.create') }}" class="btn btn-success mb-3">Ajouter un type</a>
+                    <a href="{{ route('typefilter.create') }}" class="btn btn-success mb-3"><i class="fas fa-plus"></i> Ajouter un type</a>
 
                     <div class="table-responsive">
                       <table class="table table-hover">

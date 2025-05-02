@@ -72,6 +72,7 @@
                         @foreach($produitsSansPack as $produit)
                             <option value="{{ $produit->id }}">{{ $produit->name }}</option>
                         @endforeach
+                        
                     </select>
                 </div>
 
@@ -102,115 +103,4 @@
         </ul>
     </div>
 @endif
-<script>
-  $(document).ready(function() {
-    $('#produits_associes').select2({
-        placeholder: "Choisissez un ou plusieurs produits associés",
-        allowClear: true
-    });
-  });
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const promotionSelect = document.getElementById('promotion');
-        const promoPriceContainer = document.getElementById('promo_price_container');
-        const promoPriceInput = document.getElementById('promo_price');
-
-        function togglePromoPriceField() {
-            if (promotionSelect.value === '1') {
-                promoPriceContainer.style.display = 'block';
-                promoPriceInput.removeAttribute('disabled');
-            } else {
-                promoPriceContainer.style.display = 'none';
-                promoPriceInput.setAttribute('disabled', 'disabled');
-                promoPriceInput.value = ''; // Clear the input if disabled
-            }
-        }
-
-        // Attach event listener to toggle the field on change
-        promotionSelect.addEventListener('change', togglePromoPriceField);
-
-        // Initialize the field on page load
-        togglePromoPriceField();
-    });
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const packSelect = document.getElementById('pack');
-        const produitsAssociesContainer = document.getElementById('produits_associes_container');
-
-        function toggleProduitsAssociesField() {
-            if (packSelect.value === '1') {
-                produitsAssociesContainer.style.display = 'block';
-            } else {
-                produitsAssociesContainer.style.display = 'none';
-            }
-        }
-
-        // Attach event listener to toggle the field on change
-        packSelect.addEventListener('change', toggleProduitsAssociesField);
-
-        // Initialize the field on page load
-        toggleProduitsAssociesField();
-    });
-</script>
-<script>
-    // Initialisation de selectpicker
-    $(document).ready(function() {
-        $('.selectpicker').selectpicker();
-    });
-
-    // Gestion des produits sélectionnés
-    $('#add-to-pack').on('click', function() {
-        const selectedProducts = $('#produits_associes').val(); // Récupération des IDs sélectionnés
-        const productNames = $('#produits_associes option:selected').map(function() {
-            return $(this).text();
-        }).get(); // Récupération des noms sélectionnés
-
-        $('#product-list').empty(); // Nettoyer la liste avant d'ajouter de nouveaux éléments
-        selectedProducts.forEach((id, index) => {
-            $('#product-list').append(`<li>${productNames[index]}</li>`);
-        });
-
-        // Mettre à jour l'input caché avec les IDs sélectionnés
-        $('#hidden-pack-products').val(selectedProducts.join(','));
-    });
-</script>
-<style>
-    .inline-list {
-        list-style-type: none;
-        padding: 0;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-
-    .inline-list li {
-        background-color: #f0f0f0;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        padding: 5px 10px;
-        display: inline-block;
-    }
-
-    .btn-small {
-        padding: 5px 10px;
-        font-size: 0.9rem;
-    }
-
-    .remove-item {
-        margin-left: 5px;
-        color: red;
-        cursor: pointer;
-    }
-
-    .main-panel{
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      padding-top: 50px;
-      margin-top: 10px;
-    }
-</style>
 @endsection

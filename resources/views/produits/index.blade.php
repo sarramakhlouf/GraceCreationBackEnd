@@ -22,7 +22,7 @@
               <button type="submit" class="btn btn-primary ms-2">Rechercher</button>
             </form>
 
-            <a href="{{ route('produits.create') }}" class="btn btn-success mb-3">Ajouter un produit</a>
+            <a href="{{ route('produits.create') }}" class="btn btn-success mb-3"><i class="fas fa-plus"></i> Ajouter un produit</a>
 
             <div class="table-responsive">
               <table class="table table-hover">
@@ -55,15 +55,11 @@
                       <td>{{ $product->available ? 'Oui' : 'Non' }}</td>
                       <td>{{ $product->subcategory_id }}</td>
                       <td>
-                        <a href="{{ route('produits.edit', $product) }}" class="btn btn-primary btn-sm">
-                          <i class="fas fa-edit"></i> 
-                        </a>
+                        <a href="{{ route('produits.edit', $product) }}" class="btn btn-primary btn-sm">Modifier</a>
                         <form action="{{ route('produits.destroy', $product) }}" method="POST" style="display: inline;">
                           @csrf
                           @method('DELETE')
-                          <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">
-                            <i class="fas fa-trash"></i>
-                          </button>
+                          <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">Supprimer</button>
                         </form>
                       </td>
                     </tr>
@@ -75,6 +71,9 @@
                 </tbody>
               </table>
             </div>
+            <div class="d-flex justify-content-center mt-3">
+              {{ $products->links('pagination::default') }}
+            </div>
 
           </div>
         </div>
@@ -83,53 +82,6 @@
   </div>
 </div>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
-<style>
-  .table {
-      font-size: 14px;
-      table-layout: fixed;
-      width: 100%;
-  }
-
-  .table th, .table td {
-      padding: 8px;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-  }
-
-  .table td:nth-child(3) { /* Réduire la colonne Description */
-      max-width: 150px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-  }
-
-  .table td:nth-child(5), .table td:nth-child(6), .table td:nth-child(7) { 
-      text-align: center;
-  }
-
-  .table img {
-      width: 40px;
-      height: 40px;
-      object-fit: cover;
-      border-radius: 5px;
-  }
-
-  .btn-sm {
-      padding: 3px 6px;
-      font-size: 12px;
-  }
-
-  .page-body-wrapper {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      padding-top: 50px;
-      margin-top: 10px;
-  }
-</style>
 
 @endsection

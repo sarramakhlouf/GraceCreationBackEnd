@@ -78,18 +78,25 @@ class SubCategoryController extends Controller
     {
         $data = $request->validated();
 
+        // Vérifier si une image est téléchargée
         if ($request->hasFile('image')) {
-            // Supprime l'ancienne image si elle existe
             if ($subCategory->image && Storage::exists('public/' . $subCategory->image)) {
-                Storage::delete('public/' . $subCategory->image);
+                try {
+                    Storage::delete('public/' . $subCategory->image);
+                } catch (\Exception $e) {
+                    return redirect()->route('subcategories.index')->with('error', 'Une erreur est survenue lors de la suppression de l\'ancienne image.');
+                }
             }
-
-            $imagePath = $request->file('image')->store('assets', 'public');
-            $data['image'] = $imagePath;
+            try {
+                $imagePath = $request->file('image')->store('assets', 'public');
+                $data['image'] = $imagePath;
+            } catch (\Exception $e) {
+                return redirect()->route('subcategories.index')->with('error', 'Une erreur est survenue lors du téléchargement de l\'image.');
+            }
         }
 
         $subCategory->update($data);
-
+        
         return redirect()->route('subcategories.index')->with('success', 'Sous-catégorie mise à jour avec succès');
     }
 

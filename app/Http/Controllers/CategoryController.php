@@ -76,16 +76,28 @@ class CategoryController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
-            // Supprime l'ancienne image si elle existe
+            // Vérifier si une image précédente existe et la supprimer si elle est présente
             if ($category->image && Storage::exists('public/'.$category->image)) {
                 Storage::delete('public/'.$category->image);
             }
-            $imagePath = $request->file('image')->store('assets', 'public');
-            $data['image'] = $imagePath;
+
+            // Tenter de stocker la nouvelle image
+            try {
+                $imagePath = $request->file('image')->store('assets', 'public');
+                $data['image'] = $imagePath;
+            } catch (\Exception $e) {
+                // Gestion des erreurs en cas de problème avec le stockage de l'image
+                return redirect()->route('categories.index')->with('error', 'Une erreur est survenue lors du téléchargement de l\'image.');
+            }
         }
+
+        // Mise à jour des données de la catégorie
         $category->update($data);
+
+        // Retourner à la liste des catégories avec un message de succès
         return redirect()->route('categories.index')->with('success', 'Catégorie mise à jour avec succès');
     }
+
 
     /**
      * Remove the specified resource from storage.

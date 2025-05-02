@@ -25,7 +25,6 @@
                     <a href="{{ route('subcategories.create') }}" class="btn btn-success mb-3">
                         <i class="fas fa-plus"></i> Ajouter une sous-catégorie
                     </a>
-
                     <div class="table-responsive">
                       <table class="table table-hover">
                         <thead>
@@ -50,13 +49,13 @@
                             <td>{{ $subCategory->category->name ?? 'N/A' }}</td> <
                             <td>
                               <a href="{{ route('subcategories.edit', $subCategory) }}" class="btn btn-primary btn-sm">
-                                <i class="fas fa-edit"></i> 
+                                <i class="fas fa-edit"></i>Modifier
                               </a>
                               <form action="{{ route('subcategories.destroy', $subCategory) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette sous-catégorie ?')">
-                                  <i class="fas fa-trash"></i>
+                                  <i class="fas fa-trash"></i>Supprimer
                                 </button>
                               </form>
                             </td>

@@ -25,7 +25,7 @@
                         </form>
 
                         <!-- Bouton Ajouter -->
-                        <a href="{{ route('productfilters.create') }}" class="btn btn-success mb-3">Ajouter une rolation</a>
+                        <a href="{{ route('productfilters.create') }}" class="btn btn-success mb-3"><i class="fas fa-plus"></i> Ajouter une rolation</a>
 
                         <div class="table-responsive">
                             <table class="table table-hover">

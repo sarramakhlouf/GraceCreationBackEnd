@@ -25,7 +25,7 @@
                         </form>
 
                         <!-- Bouton Ajouter -->
-                        <a href="{{ route('filters.create') }}" class="btn btn-success mb-3">Ajouter un Filtre</a>
+                        <a href="{{ route('filters.create') }}" class="btn btn-success mb-3"><i class="fas fa-plus"></i> Ajouter un Filtre</a>
 
                         <div class="table-responsive">
                             <table class="table table-hover">
@@ -72,15 +72,4 @@
         </div>
     </div>
 </div>
-
-<style>
-    .page-body-wrapper {
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        padding-top: 50px;
-        margin-top: 10px;
-    }
-</style>
 @endsection

@@ -79,17 +79,26 @@ class SlideController extends Controller
         ]);
 
         $data = [];
+
         if ($request->hasFile('image')) {
-            // Supprime l'ancienne image si elle existe
             if ($slide->image && Storage::exists('public/' . $slide->image)) {
-                Storage::delete('public/' . $slide->image);
+                try {
+                    Storage::delete('public/' . $slide->image);
+                } catch (\Exception $e) {
+                    return redirect()->route('slides.index')->with('error', 'Une erreur est survenue lors de la suppression de l\'ancienne image.');
+                }
             }
-            $imagePath = $request->file('image')->store('slides', 'public');
-            $data['image'] = $imagePath;
+
+            try {
+                $imagePath = $request->file('image')->store('slides', 'public');
+                $data['image'] = $imagePath;
+            } catch (\Exception $e) {
+                return redirect()->route('slides.index')->with('error', 'Une erreur est survenue lors du téléchargement de l\'image.');
+            }
         }
 
         $slide->update($data);
-
+        
         return redirect()->route('slides.index')->with('success', 'Slide mis à jour avec succès !');
     }
 

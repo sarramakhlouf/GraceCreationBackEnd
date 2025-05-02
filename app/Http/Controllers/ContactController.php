@@ -25,11 +25,7 @@ class ContactController extends Controller
         ];*/
         $data = $request->only(['name', 'email', 'phone', 'message']);
 
-        Mail::raw("Nom: {$data['name']}\nEmail: {$data['email']}\nTéléphone: {$data['phone']}\n\nMessage:\n{$data['message']}", function ($message) use ($data) {
-            $message->to('sarrahmakhlouf2022@gmail.com')
-                    ->subject('Nouveau message de contact')
-                    ->from($data['email'], $data['name']);
-        });
+        Mail::to('sarrahmakhlouf2022@gmail.com')->send(new ContactMail($data));
         
 
         return response()->json(['message' => 'Votre message a été envoyé avec succès !']);
